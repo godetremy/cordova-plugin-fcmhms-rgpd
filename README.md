@@ -1,21 +1,7 @@
-[![Build Status](https://travis-ci.org/arnesson/cordova-plugin-firebase.svg?branch=master)](https://travis-ci.org/arnesson/cordova-plugin-firebase)
 
-# cordova-plugin-firebase
+# cordova-plugin-firebase-rgpd
 This plugin brings push notifications, analytics, event tracking, crash reporting and more from Google Firebase to your Cordova project!
 Android and iOS supported.
-
-Donations are welcome and will go towards further development of this project. Use the addresses below to donate.
-
-```
-BTC: 1JuXhHMCPHXT2fDfSRUTef9TpE2D67sc9f
-ETH: 0x74B5eDEce465fDd360b3b03C6984784140ac742e
-BCH: qzu5ffphkcgajn7kd7d90etq82maylz34uqg4uj5jf
-LTC: LKnFugRfczVH7qfBrmhzZDknhqxCzz6wJB
-XMR: 43ZMMEh5x4miZLMZF3W3faAL5Y44fPBXrFWBVXYePBjwXCvxLuo84Cof8ufXgb4sZLEpSDE3eKr5X7jNPfd4kppr8oMX9uM
-Paypal: https://paypal.me/arnesson
-```
-
-Thank you for your support!
 
 ## Supported Cordova Versions
 - cordova: `>= 6`
@@ -33,7 +19,6 @@ cordova plugin add cordova-plugin-firebase --save
 ```
 
 ### Guides
-Great installation and setup guide by Medium.com - [https://medium.com/@felipepucinelli/how-to-add-push...](https://medium.com/@felipepucinelli/how-to-add-push-notifications-in-your-cordova-application-using-firebase-69fac067e821)
 
 ### Setup
 Download your Firebase configuration files, GoogleService-Info.plist for ios and google-services.json for android, and place them in the root folder of your cordova project.  Check out this [firebase article](https://support.google.com/firebase/answer/7015592) for details on how to download the files.
