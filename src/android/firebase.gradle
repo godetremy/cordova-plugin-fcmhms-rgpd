@@ -1,0 +1,19 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+repositories {
+    mavenCentral()
+    maven {
+        url "https://maven.google.com"
+    }
+}
+
+dependencies {
+    compile 'me.leolin:ShortcutBadger:1.1.4@aar'
+    compile 'com.google.firebase:firebase-auth:+'
+    compile('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
+       transitive = true
+    }
+}
