@@ -168,18 +168,6 @@ exports.setPerformanceCollectionEnabled = function (enabled, success, error) {
   exec(success, error, "FirebasePlugin", "setPerformanceCollectionEnabled", [enabled]);
 };
 
-exports.verifyPhoneNumber = function (number, timeOutDuration, success, error) {
-  if (typeof timeOutDuration === 'function') {
-    // method being called with old signature: function(number, success, error)
-    // timeOutDuration is the success callback, success is the error callback
-    exec(timeOutDuration, success, "FirebasePlugin", "verifyPhoneNumber", [number]);
-  } else {
-    // method being called with new signature: function(number, timeOutDuration, success, error)
-    // callbacks are correctly named
-    exec(success, error, "FirebasePlugin", "verifyPhoneNumber", [number, timeOutDuration]);
-  }
-};
-
 exports.clearAllNotifications = function (success, error) {
   exec(success, error, "FirebasePlugin", "clearAllNotifications", []);
 };

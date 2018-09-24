@@ -46,14 +46,8 @@ import java.util.Set;
 // Firebase PhoneAuth
 import java.util.concurrent.TimeUnit;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.FirebaseTooManyRequestsException;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthProvider;
 
 public class FirebasePlugin extends CordovaPlugin {
 
@@ -194,9 +188,6 @@ public class FirebasePlugin extends CordovaPlugin {
             } else {
                 this.setDefaults(callbackContext, args.getJSONObject(0), null);
             }
-            return true;
-        } else if (action.equals("verifyPhoneNumber")) {
-            this.verifyPhoneNumber(callbackContext, args.getString(0), args.getInt(1));
             return true;
         } else if (action.equals("startTrace")) {
             this.startTrace(callbackContext, args.getString(0));
@@ -931,105 +922,6 @@ public class FirebasePlugin extends CordovaPlugin {
             map.put(key, value);
         }
         return map;
-    }
-
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-
-    public void verifyPhoneNumber(
-            final CallbackContext callbackContext,
-            final String number,
-            final int timeOutDuration
-    ) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                        @Override
-                        public void onVerificationCompleted(PhoneAuthCredential credential) {
-                            // This callback will be invoked in two situations:
-                            // 1 - Instant verification. In some cases the phone number can be instantly
-                            //     verified without needing to send or enter a verification code.
-                            // 2 - Auto-retrieval. On some devices Google Play services can automatically
-                            //     detect the incoming verification SMS and perform verificaiton without
-                            //     user action.
-                            Log.d(TAG, "success: verifyPhoneNumber.onVerificationCompleted - callback and create a custom JWT Token on server and sign in with custom token - we cant do anything");
-
-                            JSONObject returnResults = new JSONObject();
-                            try {
-                                returnResults.put("verificationId", false);
-                                returnResults.put("instantVerification", true);
-                            } catch (JSONException e) {
-                                if(FirebasePlugin.crashlyticsInit()){
-                                  Crashlytics.logException(e);
-                                }
-                                callbackContext.error(e.getMessage());
-                                return;
-                            }
-                            PluginResult pluginresult = new PluginResult(PluginResult.Status.OK, returnResults);
-                            pluginresult.setKeepCallback(true);
-                            callbackContext.sendPluginResult(pluginresult);
-                        }
-
-                        @Override
-                        public void onVerificationFailed(FirebaseException e) {
-                            // This callback is invoked in an invalid request for verification is made,
-                            // for instance if the the phone number format is not valid.
-                            Log.w(TAG, "failed: verifyPhoneNumber.onVerificationFailed ", e);
-
-                            String errorMsg = "unknown error verifying number";
-                            errorMsg += " Error instance: " + e.getClass().getName();
-
-                            if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                                // Invalid request
-                                errorMsg = "Invalid phone number";
-                            } else if (e instanceof FirebaseTooManyRequestsException) {
-                                // The SMS quota for the project has been exceeded
-                                errorMsg = "The SMS quota for the project has been exceeded";
-                            }
-
-                            if(FirebasePlugin.crashlyticsInit()){
-                              Crashlytics.logException(e);
-                            }
-                            callbackContext.error(errorMsg);
-                        }
-
-                        @Override
-                        public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken token) {
-                            // The SMS verification code has been sent to the provided phone number, we
-                            // now need to ask the user to enter the code and then construct a credential
-                            // by combining the code with a verification ID [(in app)].
-                            Log.d(TAG, "success: verifyPhoneNumber.onCodeSent");
-
-                            JSONObject returnResults = new JSONObject();
-                            try {
-                                returnResults.put("verificationId", verificationId);
-                                returnResults.put("instantVerification", false);
-                            } catch (JSONException e) {
-                                if(FirebasePlugin.crashlyticsInit()){
-                                  Crashlytics.logException(e);
-                                }
-                                callbackContext.error(e.getMessage());
-                                return;
-                            }
-                            PluginResult pluginresult = new PluginResult(PluginResult.Status.OK, returnResults);
-                            pluginresult.setKeepCallback(true);
-                            callbackContext.sendPluginResult(pluginresult);
-                        }
-                    };
-
-                    PhoneAuthProvider.getInstance().verifyPhoneNumber(number, // Phone number to verify
-                            timeOutDuration, // Timeout duration
-                            TimeUnit.SECONDS, // Unit of timeout
-                            cordova.getActivity(), // Activity (for callback binding)
-                            mCallbacks); // OnVerificationStateChangedCallbacks
-                } catch (Exception e) {
-                    if(FirebasePlugin.crashlyticsInit()){
-                      Crashlytics.logException(e);
-                    }
-                    callbackContext.error(e.getMessage());
-                }
-            }
-        });
     }
 
     //
