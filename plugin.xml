@@ -111,6 +111,9 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 		<framework custom="true" src="src/ios/Firebase/RemoteConfig/FirebaseRemoteConfig.framework" />
 		<framework custom="true" src="src/ios/Firebase/RemoteConfig/FirebaseABTesting.framework" />
 		<framework custom="true" src="src/ios/Firebase/Performance/FirebasePerformance.framework" />
+		<framework custom="true" src="src/ios/Firebase/Performance/FirebaseISASwizzler.framework" />
+		<framework custom="true" src="src/ios/Firebase/Performance/FirebaseMethodSwizzler.framework" />
+		<framework custom="true" src="src/ios/Firebase/Performance/GTMSessionFetcher.framework" />
 	</platform>
 
 	<hook src="scripts/after_prepare.js" type="after_prepare" />
