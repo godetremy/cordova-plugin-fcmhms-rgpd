@@ -17,7 +17,7 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<platform name="android">
 		<config-file parent="/*" target="res/xml/config.xml">
-			<feature name="FirebaseGDPRPlugin">
+			<feature name="FirebasePlugin">
 				<param name="android-package" value="org.apache.cordova.firebase.FirebasePlugin" />
 				<param name="onload" value="true" />
 			</feature>
