@@ -17,7 +17,7 @@ module.exports = {
       "        maven { url 'https://maven.google.com' }",
       "    }",
       "    dependencies {",
-      "        classpath 'io.fabric.tools:gradle:1.25.4'",
+      "        classpath 'io.fabric.tools:gradle:1.+'",
       "        classpath 'com.google.gms:google-services:+'",
       "    }",
       "}",
