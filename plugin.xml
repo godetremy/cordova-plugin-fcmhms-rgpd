@@ -39,18 +39,13 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 					<action android:name="com.google.firebase.MESSAGING_EVENT"/>
 				</intent-filter>
 			</service>
-			<service android:name="org.apache.cordova.firebase.FirebasePluginInstanceIDService">
-				<intent-filter>
-					<action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-				</intent-filter>
-			</service>
 			<receiver android:name="org.apache.cordova.firebase.OnNotificationOpenReceiver"></receiver>
 		</config-file>
-		<resource-file src="src/android/google-services.json" target="."/>
+
 		<resource-file src="src/android/cordova-plugin-firebase-strings.xml" target="res/values/cordova-plugin-firebase-strings.xml" />
+
 		<source-file src="src/android/FirebasePlugin.java" target-dir="src/org/apache/cordova/firebase" />
 		<source-file src="src/android/OnNotificationOpenReceiver.java" target-dir="src/org/apache/cordova/firebase" />
-		<source-file src="src/android/FirebasePluginInstanceIDService.java" target-dir="src/org/apache/cordova/firebase" />
 		<source-file src="src/android/FirebasePluginMessagingService.java" target-dir="src/org/apache/cordova/firebase" />
 		<source-file src="src/android/FirebasePluginMessageReceiver.java" target-dir="src/org/apache/cordova/firebase" />
 		<source-file src="src/android/FirebasePluginMessageReceiverManager.java" target-dir="src/org/apache/cordova/firebase" />
@@ -62,7 +57,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 		<framework src="com.google.firebase:firebase-messaging:+" />
 		<framework src="com.google.firebase:firebase-config:+" />
 		<framework src="com.google.firebase:firebase-perf:+" />
-
 	</platform>
 
 	<platform name="ios">
@@ -94,7 +88,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 		<source-file src="src/ios/AppDelegate+FirebasePlugin.m" />
 		<header-file src="src/ios/FirebasePlugin.h" />
 		<source-file src="src/ios/FirebasePlugin.m" />
-
 		<header-file src="src/ios/Firebase/Firebase.h" />
 
 		<framework custom="true" src="src/ios/Firebase/Analytics/FIRAnalyticsConnector.framework" />
@@ -117,6 +110,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 	</platform>
 
 	<hook src="scripts/after_prepare.js" type="after_prepare" />
-	<hook src="scripts/after_plugin_add.js" type="after_plugin_add" />
-	<hook src="scripts/before_plugin_rm.js" type="before_plugin_rm" />
+	<hook src="scripts/after_plugin_install.js" type="after_plugin_install" />
+	<hook src="scripts/before_plugin_uninstall.js" type="before_plugin_uninstall" />
 </plugin>

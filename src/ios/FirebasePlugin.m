@@ -89,10 +89,10 @@ static FirebasePlugin *firebasePlugin;
       [FIRApp configure];
     }
 
-    if ([FIRAnalyticsConfiguration sharedInstance] == nil) {
+    if ([FIRAnalytics appInstanceID] == nil) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     } else {
-        [[FIRAnalyticsConfiguration sharedInstance] setAnalyticsCollectionEnabled:YES];
+        [FIRAnalytics setAnalyticsCollectionEnabled:YES];
         self.analyticsInit = YES;
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
@@ -141,7 +141,7 @@ static FirebasePlugin *firebasePlugin;
 - (void)getInstanceId:(CDVInvokedUrlCommand *)command {
     CDVPluginResult *pluginResult;
     if(self.firebaseInit){
-      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[[FIRInstanceID instanceID] token]];
+      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[[FIRMessaging messaging] FCMToken]];
     } else {
       pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITFIREBASE];
     }
@@ -151,7 +151,7 @@ static FirebasePlugin *firebasePlugin;
 - (void)getToken:(CDVInvokedUrlCommand *)command {
     CDVPluginResult *pluginResult;
     if(self.firebaseInit){
-      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[[FIRInstanceID instanceID] token]];
+      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[[FIRMessaging messaging] FCMToken]];
     } else {
       pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITFIREBASE];
     }
@@ -185,19 +185,27 @@ static FirebasePlugin *firebasePlugin;
     [[UNUserNotificationCenter currentNotificationCenter]
       requestAuthorizationWithOptions:authOptions
       completionHandler:^(BOOL granted, NSError * _Nullable error) {
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus: granted ? CDVCommandStatus_OK : CDVCommandStatus_ERROR];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+          CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus: granted ? CDVCommandStatus_OK : CDVCommandStatus_ERROR];
+          [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+          dispatch_async(dispatch_get_main_queue(), ^(void){
+              [[UIApplication sharedApplication] registerForRemoteNotifications];
+          });
+        });
     }];
   } else {
     // iOS 10 notifications aren't available
     // fall back to iOS 8-9 notifications
-    UIUserNotificationType allNotificationTypes = (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
-    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
-    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-    [[UIApplication sharedApplication] registerForRemoteNotifications];
-    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK];
+      [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+      dispatch_async(dispatch_get_main_queue(), ^(void){
+        UIUserNotificationType allNotificationTypes = (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+      });
+    });
   }
   return;
 }
@@ -270,7 +278,7 @@ static FirebasePlugin *firebasePlugin;
 - (void)onTokenRefresh:(CDVInvokedUrlCommand *)command {
     if(self.firebaseInit){
       self.tokenRefreshCallbackId = command.callbackId;
-      NSString* currentToken = [[FIRInstanceID instanceID] token];
+      NSString* currentToken = [[FIRMessaging messaging] FCMToken];
 
       if (currentToken != nil) {
           [self sendToken:currentToken];
@@ -312,6 +320,7 @@ static FirebasePlugin *firebasePlugin;
     [self.commandDelegate runInBackground:^{
         CDVPluginResult *pluginResult;
         NSString* name = [command.arguments objectAtIndex:0];
+
         NSString *description = NSLocalizedString([command argumentAtIndex:1 withDefault:@"No Message Provided"], nil);
         NSDictionary *parameters = @{ NSLocalizedDescriptionKey: description };
 
@@ -345,7 +354,11 @@ static FirebasePlugin *firebasePlugin;
         NSString* name = [command.arguments objectAtIndex:0];
 
         if(self.analyticsInit){
-          [FIRAnalytics setScreenName:name screenClass:NULL];
+          dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+              [FIRAnalytics setScreenName:name screenClass:NULL];
+            });
+          });
           pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         } else {
           pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITANALYTICS];
@@ -489,7 +502,7 @@ static FirebasePlugin *firebasePlugin;
           FIRTrace *trace = (FIRTrace*)[self.traces objectForKey:traceName];
 
           if (trace != nil) {
-              [trace incrementCounterNamed:counterNamed];
+              [trace incrementMetric:counterNamed byInt:1];
               [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
           } else {
               pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Trace not found"];
@@ -532,7 +545,7 @@ static FirebasePlugin *firebasePlugin;
         BOOL enabled = [[command argumentAtIndex:0] boolValue];
 
         if(self.analyticsInit){
-          [[FIRAnalyticsConfiguration sharedInstance] setAnalyticsCollectionEnabled:enabled];
+          [FIRAnalytics setAnalyticsCollectionEnabled:enabled];
           pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         } else {
           pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITANALYTICS];

@@ -8,7 +8,7 @@
         "url": "https://github.com/gvieduc/cordova-plugin-firebase-rgpd"
     },
     "name": "cordova-plugin-firebase-rgpd",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Google Firebase plugin for Cordova, GDPR compliant",
     "cordova": {
         "id": "cordova-plugin-firebase-rgpd",

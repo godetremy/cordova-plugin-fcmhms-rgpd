@@ -72,7 +72,6 @@ should make sure to include all of the frameworks from X when including the SDK.
   - FirebaseNanoPB.framework
   - FirebaseCoreDiagnostics.framework
   - FirebaseCore.framework
-  - FirebaseInstanceID.framework
   - GoogleToolboxForMac.framework
   - nanopb.framework
 ## ABTesting (~> Analytics)
@@ -164,7 +163,6 @@ FirebaseDatabase              | 4.1.5
 FirebaseDynamicLinks          | 2.3.2
 FirebaseFirestore             | 0.11.0
 FirebaseFunctions             | 1.0.0
-FirebaseInstanceID            | 2.0.10
 FirebaseInvites               | 2.0.2
 FirebaseMessaging             | 2.2.0
 FirebasePerformance           | 1.1.3
