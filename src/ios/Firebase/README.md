@@ -30,7 +30,7 @@ To integrate a Firebase SDK with your app:
 
    *Do not add the Firebase frameworks to the "Embed Frameworks" Xcode build
    phase. The Firebase frameworks are not embedded dynamic frameworks, but are
-   (static frameworks)[https://www.raywenderlich.com/65964/create-a-framework-for-ios]
+   [static frameworks](https://www.raywenderlich.com/65964/create-a-framework-for-ios)
    which cannot be embedded into your application's bundle.*
 
 6. If the SDK has resources, go into the Resources folders, which will be in
@@ -67,73 +67,193 @@ frameworks and libraries listed in each Firebase framework's
 "(~> X)" below means that the SDK requires all of the frameworks from X. You
 should make sure to include all of the frameworks from X when including the SDK.
 
+NOTE: If you are upgrading FirebaseAnalytics from before Firebase 5.5.0,
+      `FirebaseNanoPB` has been renamed to `MeasurementNanoPB`. After you add
+      `MeasurementNanoPB` to your project, please remove `FirebaseNanoPB` as it
+      no longer provides any functionality.
+
 ## Analytics
-  - FirebaseAnalytics.framework
-  - FirebaseNanoPB.framework
-  - FirebaseCoreDiagnostics.framework
-  - FirebaseCore.framework
-  - GoogleToolboxForMac.framework
-  - nanopb.framework
+- FIRAnalyticsConnector.framework
+- FirebaseAnalytics.framework
+- FirebaseCore.framework
+- FirebaseCoreDiagnostics.framework
+- FirebaseInstanceID.framework
+- GoogleAppMeasurement.framework
+- GoogleDataTransport.framework
+- GoogleDataTransportCCTSupport.framework
+- GoogleUtilities.framework
+- nanopb.framework
+
 ## ABTesting (~> Analytics)
-  - FirebaseABTesting.framework
-  - Protobuf.framework
+- FirebaseABTesting.framework
+- Protobuf.framework
+
 ## AdMob (~> Analytics)
-  - GoogleMobileAds.framework
+- GoogleMobileAds.framework
+
 ## Auth (~> Analytics)
-  - FirebaseAuth.framework
-  - GTMSessionFetcher.framework
-## Crash (~> Analytics)
-  - FirebaseCrash.framework
-  - Protobuf.framework
+- FirebaseAuth.framework
+- GTMSessionFetcher.framework
+
 ## Database (~> Analytics)
-  - FirebaseDatabase.framework
-  - leveldb-library.framework
+- FirebaseDatabase.framework
+- leveldb-library.framework
+
 ## DynamicLinks (~> Analytics)
-  - FirebaseDynamicLinks.framework
+- FirebaseDynamicLinks.framework
+
 ## Firestore (~> Analytics)
-  - BoringSSL.framework
-  - FirebaseFirestore.framework
-  - Protobuf.framework
-  - gRPC.framework
-  - gRPC-Core.framework
-  - gRPC-ProtoRPC.framework
-  - gRPC-RxLibrary.framework
-  - leveldb-library.framework
+- BoringSSL-GRPC.framework
+- FirebaseFirestore.framework
+- Protobuf.framework
+- gRPC-C++.framework
+- gRPC-Core.framework
+- leveldb-library.framework
 
-  You'll also need to add the resources in the
-  Resources directory into your target's main
-  bundle.
+You'll also need to add the resources in the Resources
+directory into your target's main bundle.
 ## Functions (~> Analytics)
-  - FirebaseFunctions.framework
-  - GTMSessionFetcher.framework
-## Invites (~> Analytics)
-  - FirebaseDynamicLinks.framework
-  - FirebaseInvites.framework
-  - GTMOAuth2.framework
-  - GTMSessionFetcher.framework
-  - GoogleAPIClientForREST.framework
-  - GoogleSignIn.framework
-  - Protobuf.framework
+- FirebaseFunctions.framework
+- GTMSessionFetcher.framework
 
-  You'll also need to add the resources in the
-  Resources directory into your target's main
-  bundle.
+## GoogleSignIn
+- AppAuth.framework
+- GTMAppAuth.framework
+- GTMSessionFetcher.framework
+- GoogleSignIn.framework
+
+You'll also need to add the resources in the Resources
+directory into your target's main bundle.
+## InAppMessaging (~> Analytics)
+- FirebaseInAppMessaging.framework
+
+## InAppMessagingDisplay (~> Analytics)
+- FirebaseInAppMessaging.framework
+- FirebaseInAppMessagingDisplay.framework
+
+You'll also need to add the resources in the Resources
+directory into your target's main bundle.
 ## Messaging (~> Analytics)
-  - FirebaseMessaging.framework
-  - Protobuf.framework
+- FirebaseMessaging.framework
+- Protobuf.framework
+
+## MLModelInterpreter (~> Analytics)
+- FirebaseMLCommon.framework
+- FirebaseMLModelInterpreter.framework
+- GTMSessionFetcher.framework
+- tensorflow_lite.framework
+
+## MLNaturalLanguage (~> Analytics)
+- FirebaseMLCommon.framework
+- FirebaseMLNaturalLanguage.framework
+- GTMSessionFetcher.framework
+- GoogleToolboxForMac.framework
+- Protobuf.framework
+
+## MLNLLanguageID (~> Analytics)
+- FirebaseMLCommon.framework
+- FirebaseMLNLLanguageID.framework
+- FirebaseMLNaturalLanguage.framework
+- GTMSessionFetcher.framework
+- GoogleToolboxForMac.framework
+- Protobuf.framework
+
+## MLNLSmartReply (~> Analytics)
+- FirebaseABTesting.framework
+- FirebaseMLCommon.framework
+- FirebaseMLNLLanguageID.framework
+- FirebaseMLNLSmartReply.framework
+- FirebaseMLNaturalLanguage.framework
+- FirebaseRemoteConfig.framework
+- GTMSessionFetcher.framework
+- GoogleToolboxForMac.framework
+- Protobuf.framework
+
+You'll also need to add the resources in the Resources
+directory into your target's main bundle.
+## MLNLTranslate (~> Analytics)
+- FirebaseABTesting.framework
+- FirebaseMLCommon.framework
+- FirebaseMLNLTranslate.framework
+- FirebaseMLNaturalLanguage.framework
+- FirebaseRemoteConfig.framework
+- GTMSessionFetcher.framework
+- GoogleToolboxForMac.framework
+- Protobuf.framework
+
+You'll also need to add the resources in the Resources
+directory into your target's main bundle.
+## MLVision (~> Analytics)
+- FirebaseMLCommon.framework
+- FirebaseMLVision.framework
+- GTMSessionFetcher.framework
+- GoogleAPIClientForREST.framework
+- GoogleMobileVision.framework
+- GoogleToolboxForMac.framework
+- Protobuf.framework
+
+## MLVisionAutoML (~> Analytics)
+- FirebaseMLCommon.framework
+- FirebaseMLVision.framework
+- FirebaseMLVisionAutoML.framework
+- GTMSessionFetcher.framework
+- GoogleAPIClientForREST.framework
+- GoogleMobileVision.framework
+- GoogleToolboxForMac.framework
+- Protobuf.framework
+- tensorflow_lite.framework
+
+## MLVisionObjectDetection (~> Analytics)
+- FirebaseMLCommon.framework
+- FirebaseMLVision.framework
+- FirebaseMLVisionObjectDetection.framework
+- GTMSessionFetcher.framework
+- GoogleAPIClientForREST.framework
+- GoogleMobileVision.framework
+- GoogleToolboxForMac.framework
+- Protobuf.framework
+
+## MLVisionBarcodeModel (~> Analytics)
+- BarcodeDetector.framework
+- FirebaseMLVisionBarcodeModel.framework
+- GoogleToolboxForMac.framework
+
+## MLVisionFaceModel (~> Analytics)
+- FaceDetector.framework
+- FirebaseMLVisionFaceModel.framework
+- GoogleToolboxForMac.framework
+
+You'll also need to add the resources in the Resources
+directory into your target's main bundle.
+## MLVisionLabelModel (~> Analytics)
+- FirebaseMLVisionLabelModel.framework
+- GoogleToolboxForMac.framework
+- LabelDetector.framework
+
+## MLVisionTextModel (~> Analytics)
+- FirebaseMLVisionTextModel.framework
+- GoogleToolboxForMac.framework
+- TextDetector.framework
+
+You'll also need to add the resources in the Resources
+directory into your target's main bundle.
 ## Performance (~> Analytics)
-  - FirebasePerformance.framework
-  - FirebaseMethodSwizzler.framework
-  - FirebaseISASwizzler.framework
-  - GTMSessionFetcher.framework
-  - Protobuf.framework
+- FirebaseABTesting.framework
+- FirebasePerformance.framework
+- FirebaseRemoteConfig.framework
+- GTMSessionFetcher.framework
+- GoogleToolboxForMac.framework
+- Protobuf.framework
+
 ## RemoteConfig (~> Analytics)
-  - FirebaseABTesting.framework
-  - FirebaseRemoteConfig.framework
-  - Protobuf.framework
+- FirebaseABTesting.framework
+- FirebaseRemoteConfig.framework
+- Protobuf.framework
+
 ## Storage (~> Analytics)
-  - FirebaseStorage.framework
-  - GTMSessionFetcher.framework
+- FirebaseStorage.framework
+- GTMSessionFetcher.framework
+
 
 # Samples
 
@@ -150,36 +270,58 @@ included in this archive, you'll need to use CocoaPods.
 The frameworks in this directory map to these versions of the Firebase SDKs in
 CocoaPods.
 
-           CocoaPod           | Version
------------------------------ | -------
-BoringSSL                     | 10.0.2
-Firebase                      | 4.13.0
-FirebaseABTesting             | 1.0.0
-FirebaseAnalytics             | 4.2.0
-FirebaseAuth                  | 4.6.1
-FirebaseCore                  | 4.0.20
-FirebaseCrash                 | 2.0.2
-FirebaseDatabase              | 4.1.5
-FirebaseDynamicLinks          | 2.3.2
-FirebaseFirestore             | 0.11.0
-FirebaseFunctions             | 1.0.0
-FirebaseInvites               | 2.0.2
-FirebaseMessaging             | 2.2.0
-FirebasePerformance           | 1.1.3
-FirebaseRemoteConfig          | 2.1.3
-FirebaseStorage               | 2.2.0
-FirebaseSwizzlingUtilities    | 1.0.1
-GTMOAuth2                     | 1.1.6
-GTMSessionFetcher             | 1.1.15
-Google-Mobile-Ads-SDK         | 7.30.0
-GoogleAPIClientForREST        | 1.3.4
-GoogleSignIn                  | 4.1.2
-GoogleToolboxForMac           | 2.1.3
-Protobuf                      | 3.5.0
-gRPC                          | 1.10.0
-gRPC-Core                     | 1.10.0
-gRPC-ProtoRPC                 | 1.10.0
-gRPC-RxLibrary                | 1.10.0
-leveldb-library               | 1.20
-nanopb                        | 0.3.8
+            CocoaPod            | Version
+--------------------------------|---------
+AppAuth                         | 1.2.0
+BoringSSL-GRPC                  | 0.0.3
+Firebase                        | 6.7.0
+FirebaseABTesting               | 3.1.0
+FirebaseAnalytics               | 6.1.1
+FirebaseAnalyticsInterop        | 1.4.0
+FirebaseAuth                    | 6.2.3
+FirebaseAuthInterop             | 1.0.0
+FirebaseCore                    | 6.2.1
+FirebaseCoreDiagnostics         | 1.0.1
+FirebaseCoreDiagnosticsInterop  | 1.0.0
+FirebaseDatabase                | 6.1.0
+FirebaseDynamicLinks            | 4.0.3
+FirebaseFirestore               | 1.4.4
+FirebaseFunctions               | 2.5.1
+FirebaseInAppMessaging          | 0.15.3
+FirebaseInAppMessagingDisplay   | 0.15.4
+FirebaseInstanceID              | 4.2.3
+FirebaseMLCommon                | 0.17.0
+FirebaseMLModelInterpreter      | 0.17.0
+FirebaseMLNLLanguageID          | 0.16.3
+FirebaseMLNLSmartReply          | 0.16.3
+FirebaseMLNLTranslate           | 0.16.3
+FirebaseMLNaturalLanguage       | 0.16.3
+FirebaseMLVision                | 0.17.0
+FirebaseMLVisionAutoML          | 0.17.0
+FirebaseMLVisionBarcodeModel    | 0.17.0
+FirebaseMLVisionFaceModel       | 0.17.0
+FirebaseMLVisionLabelModel      | 0.17.0
+FirebaseMLVisionObjectDetection | 0.17.0
+FirebaseMLVisionTextModel       | 0.17.0
+FirebaseMessaging               | 4.1.3
+FirebasePerformance             | 3.1.2
+FirebaseRemoteConfig            | 4.3.0
+FirebaseStorage                 | 3.4.0
+GTMAppAuth                      | 1.0.0
+GTMSessionFetcher               | 1.2.2
+Google-Mobile-Ads-SDK           | 7.48.0
+GoogleAPIClientForREST          | 1.3.9
+GoogleAppMeasurement            | 6.1.1
+GoogleDataTransport             | 1.1.2
+GoogleDataTransportCCTSupport   | 1.0.2
+GoogleMobileVision              | 1.6.0
+GoogleSignIn                    | 5.0.0
+GoogleToolboxForMac             | 2.2.1
+GoogleUtilities                 | 6.2.5
+Protobuf                        | 3.9.0
+TensorFlowLite                  | 1.13.1
+gRPC-C++                        | 0.0.9
+gRPC-Core                       | 1.21.0
+leveldb-library                 | 1.20
+nanopb                          | 0.3.901
 
