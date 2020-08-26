@@ -15,6 +15,7 @@ module.exports = {
       "    repositories {",
       "        maven { url 'https://maven.fabric.io/public' }",
       "        maven { url 'https://maven.google.com' }",
+      "        maven { url 'http://developer.huawei.com/repo/' }",
       "    }",
       "    dependencies {",
       "        classpath 'io.fabric.tools:gradle:1.+'",

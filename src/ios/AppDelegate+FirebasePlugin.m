@@ -16,7 +16,7 @@
 #define kApplicationInBackgroundKey @"applicationInBackground"
 #define kDelegateKey @"delegate"
 
-@implementation AppDelegate (FirebasePlugin)
+@implementation AppDelegate (FCMHMSPlugin)
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 
@@ -86,7 +86,7 @@
 
     // Connect to FCM since connection may have failed when attempted before having a token.
     [self connectToFcm];
-    [FirebasePlugin.firebasePlugin sendToken:refreshedToken];
+    [FCMHMSPlugin.fcmhmsPlugin sendToken:refreshedToken];
 }
 
 // This callback is fired at each app startup and whenever a new token is created.
@@ -96,7 +96,7 @@
 
     // Connect to FCM since connection may have failed when attempted before having a token.
     [self connectToFcm];
-    [FirebasePlugin.firebasePlugin sendToken:fcmToken];
+    [FCMHMSPlugin.fcmhmsPlugin sendToken:fcmToken];
 }
 
 - (void)connectToFcm {
@@ -119,7 +119,7 @@
     // Pring full message.
     NSLog(@"%@", mutableUserInfo);
 
-    [FirebasePlugin.firebasePlugin sendNotification:mutableUserInfo];
+    [FCMHMSPlugin.fcmhmsPlugin sendNotification:mutableUserInfo];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
@@ -131,7 +131,7 @@
     // Pring full message.
     NSLog(@"%@", mutableUserInfo);
     completionHandler(UIBackgroundFetchResultNewData);
-    [FirebasePlugin.firebasePlugin sendNotification:mutableUserInfo];
+    [FCMHMSPlugin.fcmhmsPlugin sendNotification:mutableUserInfo];
 }
 
 // [START ios_10_data_message]
@@ -139,7 +139,7 @@
 // To enable direct data messages, you can set [Messaging messaging].shouldEstablishDirectChannel to YES.
 - (void)messaging:(FIRMessaging *)messaging didReceiveMessage:(FIRMessagingRemoteMessage *)remoteMessage {
     NSLog(@"Received data message: %@", remoteMessage.appData);
-    [FirebasePlugin.firebasePlugin sendNotification:remoteMessage.appData];
+    [FCMHMSPlugin.fcmhmsPlugin sendNotification:remoteMessage.appData];
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
@@ -167,7 +167,7 @@
     NSLog(@"%@", mutableUserInfo);
 
     completionHandler(UNNotificationPresentationOptionAlert);
-    [FirebasePlugin.firebasePlugin sendNotification:mutableUserInfo];
+    [FCMHMSPlugin.fcmhmsPlugin sendNotification:mutableUserInfo];
 }
 
 - (void) userNotificationCenter:(UNUserNotificationCenter *)center
@@ -188,7 +188,7 @@
     // Print full message.
     NSLog(@"Response %@", mutableUserInfo);
 
-    [FirebasePlugin.firebasePlugin sendNotification:mutableUserInfo];
+    [FCMHMSPlugin.fcmhmsPlugin sendNotification:mutableUserInfo];
 
     completionHandler();
 }

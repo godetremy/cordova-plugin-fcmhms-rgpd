@@ -1,4 +1,4 @@
-package org.apache.cordova.firebase;
+package org.apache.cordova.fcmhms;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -19,7 +19,7 @@ public class OnNotificationOpenReceiver extends BroadcastReceiver {
         Bundle data = intent.getExtras();
         data.putBoolean("tap", true);
 
-        FirebasePlugin.sendNotification(data, context);
+        FCMHMSPlugin.sendNotification(data, context);
 
         launchIntent.putExtras(data);
         context.startActivity(launchIntent);

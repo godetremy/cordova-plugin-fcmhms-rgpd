@@ -5,13 +5,13 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/gvieduc/cordova-plugin-firebase-rgpd"
+        "url": "https://github.com/gvieduc/cordova-plugin-fcmhms-rgpd"
     },
-    "name": "cordova-plugin-firebase-rgpd",
+    "name": "cordova-plugin-fcmhms-rgpd",
     "version": "0.1.2",
-    "description": "Google Firebase plugin for Cordova, GDPR compliant",
+    "description": "Google Firebase / Huawei Push plugin for Cordova, GDPR compliant",
     "cordova": {
-        "id": "cordova-plugin-firebase-rgpd",
+        "id": "cordova-plugin-fcmhms-rgpd",
         "platforms": [
             "android",
             "ios"
@@ -23,6 +23,7 @@
         "cordova-ios",
         "cordova-browser",
         "firebase",
+        "hms",
         "push",
         "notifications",
         "phone auth"

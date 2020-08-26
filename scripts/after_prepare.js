@@ -2,11 +2,6 @@
 
 'use strict';
 
-/**
- * This hook makes sure projects using [cordova-plugin-firebase](https://github.com/arnesson/cordova-plugin-firebase)
- * will build properly and have the required key files copied to the proper destinations when the app is build on Ionic Cloud using the package command.
- * Credits: https://github.com/arnesson.
- */
 var fs = require('fs');
 var path = require('path');
 
@@ -40,7 +35,7 @@ var PLATFORM = {
       'www/GoogleService-Info.plist'
     ]
   },
-  ANDROID: {
+  GMS: {
     dest: [
       ANDROID_DIR + '/google-services.json',
       ANDROID_DIR + '/app/google-services.json'
@@ -49,6 +44,18 @@ var PLATFORM = {
       'google-services.json',
       ANDROID_DIR + '/assets/www/google-services.json',
       'www/google-services.json'
+    ],
+    stringsXml: fileExists(ANDROID_DIR + '/app/src/main/res/values/strings.xml') ? ANDROID_DIR + '/app/src/main/res/values/strings.xml' : ANDROID_DIR + '/res/values/strings.xml'
+  },
+  HMS: {
+    dest: [
+      ANDROID_DIR + '/agconnect-services.json',
+      ANDROID_DIR + '/app/agconnect-services.json'
+    ],
+    src: [
+      'agconnect-services.json',
+      ANDROID_DIR + '/assets/www/agconnect-services.json',
+      'www/agconnect-services.json'
     ],
     stringsXml: fileExists(ANDROID_DIR + '/app/src/main/res/values/strings.xml') ? ANDROID_DIR + '/app/src/main/res/values/strings.xml' : ANDROID_DIR + '/res/values/strings.xml'
   }
@@ -111,11 +118,15 @@ module.exports = function (context) {
   var platforms = context.opts.platforms;
   // Copy key files to their platform specific folders
   if (platforms.indexOf('ios') !== -1 && directoryExists(IOS_DIR)) {
-    console.log('Preparing Firebase on iOS');
+    console.log('Preparing fcmhms on iOS');
     copyKey(PLATFORM.IOS);
   }
   if (platforms.indexOf('android') !== -1 && directoryExists(ANDROID_DIR)) {
-    console.log('Preparing Firebase on Android');
-    copyKey(PLATFORM.ANDROID);
+    console.log('Preparing fcmhms on Android for GMS');
+    copyKey(PLATFORM.GMS);
+  }
+  if (platforms.indexOf('android') !== -1 && directoryExists(ANDROID_DIR)) {
+    console.log('Preparing fcmhms on Android for HMS');
+    copyKey(PLATFORM.HMS);
   }
 };

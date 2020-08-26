@@ -1,0 +1,26 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        // huawei maven
+        maven {
+          url "http://developer.huawei.com/repo/"
+        }
+    }
+}
+repositories {
+    mavenCentral()
+    maven {
+        url "https://maven.google.com"
+    }
+    maven {
+        url "http://developer.huawei.com/repo/"
+    }
+}
+
+dependencies {
+    compile 'me.leolin:ShortcutBadger:1.1.+@aar'
+    compile('com.crashlytics.sdk.android:crashlytics:2.+@aar') {
+       transitive = true
+    }
+}

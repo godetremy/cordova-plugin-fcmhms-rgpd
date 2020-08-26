@@ -1,4 +1,4 @@
-package org.apache.cordova.firebase;
+package org.apache.cordova.fcmhms;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -111,7 +111,7 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
 
         // TODO: Add option to developer to configure if show notification when app on foreground
         if (!TextUtils.isEmpty(text) || !TextUtils.isEmpty(title) || (!data.isEmpty())) {
-            boolean showNotification = (FirebasePlugin.inBackground() || !FirebasePlugin.hasNotificationsCallback()) && (!TextUtils.isEmpty(text) || !TextUtils.isEmpty(title));
+            boolean showNotification = (FCMHMSPlugin.inBackground() || !FCMHMSPlugin.hasNotificationsCallback()) && (!TextUtils.isEmpty(text) || !TextUtils.isEmpty(title));
             sendNotification(id, title, text, data, showNotification, sound, lights);
         }
 
@@ -200,7 +200,7 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
             bundle.putBoolean("tap", false);
             bundle.putString("title", title);
             bundle.putString("body", messageBody);
-            FirebasePlugin.sendNotification(bundle, this.getApplicationContext());
+            FCMHMSPlugin.sendNotification(bundle, this.getApplicationContext());
         }
     }
 }

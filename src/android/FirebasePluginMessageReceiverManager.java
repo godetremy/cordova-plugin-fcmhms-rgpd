@@ -1,4 +1,4 @@
-package org.apache.cordova.firebase;
+package org.apache.cordova.fcmhms;
 
 import com.google.firebase.messaging.RemoteMessage;
 

@@ -2,8 +2,7 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
 #import "Firebase.h"
-#import <Fabric/Fabric.h>
-#import <Crashlytics/Crashlytics.h>
+@import FirebaseCrashlytics;
 @import FirebaseInstanceID;
 @import FirebaseMessaging;
 @import FirebaseAnalytics;
@@ -18,7 +17,7 @@
 #define NSFoundationVersionNumber_iOS_9_x_Max 1299
 #endif
 
-@implementation FirebasePlugin
+@implementation FCMHMSPlugin
 
 @synthesize notificationCallbackId;
 @synthesize tokenRefreshCallbackId;
@@ -37,15 +36,15 @@ static NSString * const ERRORINITCRASHLYTICS = @"Crashlytics isn't initialised";
 static NSString * const ERRORINITANALYTICS = @"Analytics isn't initialised";
 static NSString * const ERRORINITREMOTECONFIG = @"RemoteConfig isn't initialised";
 static NSString * const ERRORINITPERFORMANCE = @"Performance isn't initialised";
-static FirebasePlugin *firebasePlugin;
+static FCMHMSPlugin *fcmhmsPlugin;
 
-+ (FirebasePlugin *) firebasePlugin {
-    return firebasePlugin;
++ (FCMHMSPlugin *) fcmhmsPlugin {
+    return fcmhmsPlugin;
 }
 
 - (void)pluginInitialize {
     NSLog(@"Starting Firebase plugin");
-    firebasePlugin = self;
+    fcmhmsPlugin = self;
     self.firebaseInit = NO;
     self.crashlyticsInit = NO;
     self.analyticsInit = NO;
@@ -71,9 +70,11 @@ static FirebasePlugin *firebasePlugin;
 
 - (void)initCrashlytics:(CDVInvokedUrlCommand *)command {
     __block CDVPluginResult *pluginResult;
-    [Fabric with:@[[Crashlytics class]]];
+    if ([FIRApp defaultApp] == nil) {
+      [FIRApp configure];
+    }
 
-    if ([Crashlytics sharedInstance] == nil) {
+    if ([FIRCrashlytics crashlytics] == nil) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     } else {
         self.crashlyticsInit = YES;
@@ -339,7 +340,7 @@ static FirebasePlugin *firebasePlugin;
         CDVPluginResult *pluginResult;
         NSString* errorMessage = [command.arguments objectAtIndex:0];
         if(self.crashlyticsInit){
-          CLSNSLog(@"%@", errorMessage);
+          [[FIRCrashlytics crashlytics] logWithFormat:@"%@", errorMessage];
           pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         } else {
           pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITCRASHLYTICS];

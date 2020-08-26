@@ -1,8 +1,8 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
 
-@interface FirebasePlugin : CDVPlugin
-+ (FirebasePlugin *) firebasePlugin;
+@interface FCMHMSPlugin : CDVPlugin
++ (FCMHMSPlugin *) fcmhmsPlugin;
 - (void)initFirebase:(CDVInvokedUrlCommand*)command;
 - (void)initCrashlytics:(CDVInvokedUrlCommand*)command;
 - (void)initAnalytics:(CDVInvokedUrlCommand*)command;

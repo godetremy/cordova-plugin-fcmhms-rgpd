@@ -1,5 +1,5 @@
 
-# cordova-plugin-firebase-rgpd
+# cordova-plugin-fcmhms-rgpd
 This plugin brings push notifications, analytics, event tracking, crash reporting and more from Google Firebase to your Cordova project!
 Android and iOS supported.
 
@@ -11,11 +11,11 @@ Android and iOS supported.
 ## Installation
 Install the plugin by adding it your project's config.xml:
 ```
-<plugin name="cordova-plugin-firebase" spec="^1.0.0" />
+<plugin name="cordova-plugin-fcmhms-rgpd" spec="^1.0.0" />
 ```
 or by running:
 ```
-cordova plugin add cordova-plugin-firebase --save
+cordova plugin add cordova-plugin-fcmhms-rgpd
 ```
 
 ### Guides
@@ -57,14 +57,14 @@ Download your container-config json file from Tag Manager and add a resource-fil
 
 ## Changing Notification Icon
 The plugin will use notification_icon from drawable resources if it exists, otherwise the default app icon is used.
-To set a big icon and small icon for notifications, define them through drawable nodes.  
-Create the required `styles.xml` files and add the icons to the  
-`<projectroot>/res/native/android/res/<drawable-DPI>` folders.  
+To set a big icon and small icon for notifications, define them through drawable nodes.
+Create the required `styles.xml` files and add the icons to the
+`<projectroot>/res/native/android/res/<drawable-DPI>` folders.
 
-The example below uses a png named `ic_silhouette.png`, the app Icon (@mipmap/icon) and sets a base theme.  
-From android version 21 (Lollipop) notifications were changed, needing a separate setting.  
-If you only target Lollipop and above, you don't need to setup both.  
-Thankfully using the version dependant asset selections, we can make one build/apk supporting all target platforms.  
+The example below uses a png named `ic_silhouette.png`, the app Icon (@mipmap/icon) and sets a base theme.
+From android version 21 (Lollipop) notifications were changed, needing a separate setting.
+If you only target Lollipop and above, you don't need to setup both.
+Thankfully using the version dependant asset selections, we can make one build/apk supporting all target platforms.
 `<projectroot>/res/native/android/res/values/styles.xml`
 ```
 <?xml version="1.0" encoding="utf-8" ?>
@@ -77,7 +77,7 @@ Thankfully using the version dependant asset selections, we can make one build/a
     <drawable name="notification_icon">@mipmap/icon</drawable>
 </resources>
 ```
-and  
+and
 `<projectroot>/res/native/android/res/values-v21/styles.xml`
 ```
 <?xml version="1.0" encoding="utf-8" ?>
@@ -112,7 +112,7 @@ On Android Lollipop and above you can also set the accent color for the notifica
 
 Get the device token (id):
 ```
-window.FirebasePlugin.getToken(function(token) {
+window.FCMHMSPlugin.getToken(function(token) {
     // save this server-side and use it to push notifications to this device
     console.log(token);
 }, function(error) {
@@ -125,7 +125,7 @@ Note that token will be null if it has not been established yet
 
 Register for token changes:
 ```
-window.FirebasePlugin.onTokenRefresh(function(token) {
+window.FCMHMSPlugin.onTokenRefresh(function(token) {
     // save this server-side and use it to push notifications to this device
     console.log(token);
 }, function(error) {
@@ -138,7 +138,7 @@ This is the best way to get a valid token for the device as soon as the token is
 
 Register notification callback:
 ```
-window.FirebasePlugin.onNotificationOpen(function(notification) {
+window.FCMHMSPlugin.onNotificationOpen(function(notification) {
     console.log(notification);
 }, function(error) {
     console.error(error);
@@ -161,13 +161,13 @@ Notification icon on Android:
 
 Grant permission to receive push notifications (will trigger prompt):
 ```
-window.FirebasePlugin.grantPermission();
+window.FCMHMSPlugin.grantPermission();
 ```
 ### hasPermission
 
 Check permission to receive push notifications:
 ```
-window.FirebasePlugin.hasPermission(function(data){
+window.FCMHMSPlugin.hasPermission(function(data){
     console.log(data.isEnabled);
 });
 ```
@@ -176,19 +176,19 @@ window.FirebasePlugin.hasPermission(function(data){
 
 Set a number on the icon badge:
 ```
-window.FirebasePlugin.setBadgeNumber(3);
+window.FCMHMSPlugin.setBadgeNumber(3);
 ```
 
 Set 0 to clear the badge
 ```
-window.FirebasePlugin.setBadgeNumber(0);
+window.FCMHMSPlugin.setBadgeNumber(0);
 ```
 
 ### getBadgeNumber
 
 Get icon badge number:
 ```
-window.FirebasePlugin.getBadgeNumber(function(n) {
+window.FCMHMSPlugin.getBadgeNumber(function(n) {
     console.log(n);
 });
 ```
@@ -197,56 +197,56 @@ window.FirebasePlugin.getBadgeNumber(function(n) {
 
 Clear all pending notifications from the drawer:
 ```
-window.FirebasePlugin.clearAllNotifications();
+window.FCMHMSPlugin.clearAllNotifications();
 ```
 
 ### subscribe
 
 Subscribe to a topic:
 ```
-window.FirebasePlugin.subscribe("example");
+window.FCMHMSPlugin.subscribe("example");
 ```
 
 ### unsubscribe
 
 Unsubscribe from a topic:
 ```
-window.FirebasePlugin.unsubscribe("example");
+window.FCMHMSPlugin.unsubscribe("example");
 ```
 
 ### unregister
 
 Unregister from firebase, used to stop receiving push notifications. Call this when you logout user from your app. :
 ```
-window.FirebasePlugin.unregister();
+window.FCMHMSPlugin.unregister();
 ```
 
 ### logEvent
 
 Log an event using Analytics:
 ```
-window.FirebasePlugin.logEvent("select_content", {content_type: "page_view", item_id: "home"});
+window.FCMHMSPlugin.logEvent("select_content", {content_type: "page_view", item_id: "home"});
 ```
 
 ### setScreenName
 
 Set the name of the current screen in Analytics:
 ```
-window.FirebasePlugin.setScreenName("Home");
+window.FCMHMSPlugin.setScreenName("Home");
 ```
 
 ### setUserId
 
 Set a user id for use in Analytics:
 ```
-window.FirebasePlugin.setUserId("user_id");
+window.FCMHMSPlugin.setUserId("user_id");
 ```
 
 ### setUserProperty
 
 Set a user property for use in Analytics:
 ```
-window.FirebasePlugin.setUserProperty("name", "value");
+window.FCMHMSPlugin.setUserProperty("name", "value");
 ```
 
 ### verifyPhoneNumber
@@ -259,22 +259,22 @@ Request a verification ID and send a SMS with a verification code. Use them to c
 **NOTE: This will only work on physical devices.**
 
 iOS will return: credential (string)
-Android will return: 
+Android will return:
 credential.verificationId (object and with key verificationId)
 credential.instantVerification (boolean)
 
-You need to use device plugin in order to access the right key. 
+You need to use device plugin in order to access the right key.
 
 IMPORTANT NOTE: Android supports auto-verify and instant device verification. Therefore in that case it doesn't make sense to ask for an sms code as you won't receive one. Also, **verificationId** will be *false* in this case. In order to sign the user in you need to check **credential.instantVerification**, if it's true, skip the SMS Code entry, call your backend server (sorry, it is the only way to succeed with this plugin) and pass the phone number as param to identify the user (via ajax for example, using any endpoint to your backend).
 
 When using node.js Firebase Admin-SDK, follow this tutorial:
 - https://firebase.google.com/docs/auth/admin/create-custom-tokens
 
-Pass back your custom generated token and call 
-```js 
+Pass back your custom generated token and call
+```js
 firebase.auth().signInWithCustomToken(customTokenFromYourServer);
 ```
-instead of 
+instead of
 ```
 firebase.auth().signInWithCredential(credential)
 ```
@@ -285,7 +285,7 @@ If this process is too complex for you, use this awesome plugin
 It's not perfect but it fits for the most use cases and doesn't require calling your endpoint, as it has native phone auth support.
 
 ```
-window.FirebasePlugin.verifyPhoneNumber(number, timeOutDuration, function(credential) {
+window.FCMHMSPlugin.verifyPhoneNumber(number, timeOutDuration, function(credential) {
     console.log(credential);
 
     // ask user to input verificationCode:
@@ -297,7 +297,7 @@ window.FirebasePlugin.verifyPhoneNumber(number, timeOutDuration, function(creden
 
     // sign in with the credential
     firebase.auth().signInWithCredential(credential);
-    
+
     // call if credential.instantVerification was true (android only)
     firebase.auth().signInWithCustomToken(customTokenFromYourServer);
 
@@ -320,13 +320,13 @@ Setup your push notifications first, and verify that they are arriving on your p
 
 Fetch Remote Config parameter values for your app:
 ```
-window.FirebasePlugin.fetch(function () {
+window.FCMHMSPlugin.fetch(function () {
     // success callback
 }, function () {
     // error callback
 });
 // or, specify the cacheExpirationSeconds
-window.FirebasePlugin.fetch(600, function () {
+window.FCMHMSPlugin.fetch(600, function () {
     // success callback
 }, function () {
     // error callback
@@ -337,7 +337,7 @@ window.FirebasePlugin.fetch(600, function () {
 
 Activate the Remote Config fetched config:
 ```
-window.FirebasePlugin.activateFetched(function(activated) {
+window.FCMHMSPlugin.activateFetched(function(activated) {
     // activated will be true if there was a fetched config activated,
     // or false if no fetched config was found, or the fetched config was already activated.
     console.log(activated);
@@ -350,13 +350,13 @@ window.FirebasePlugin.activateFetched(function(activated) {
 
 Retrieve a Remote Config value:
 ```
-window.FirebasePlugin.getValue("key", function(value) {
+window.FCMHMSPlugin.getValue("key", function(value) {
     console.log(value);
 }, function(error) {
     console.error(error);
 });
 // or, specify a namespace for the config value
-window.FirebasePlugin.getValue("key", "namespace", function(value) {
+window.FCMHMSPlugin.getValue("key", "namespace", function(value) {
     console.log(value);
 }, function(error) {
     console.error(error);
@@ -367,7 +367,7 @@ window.FirebasePlugin.getValue("key", "namespace", function(value) {
 **NOTE: byte array is only available for SDK 19+**
 Retrieve a Remote Config byte array:
 ```
-window.FirebasePlugin.getByteArray("key", function(bytes) {
+window.FCMHMSPlugin.getByteArray("key", function(bytes) {
     // a Base64 encoded string that represents the value for "key"
     console.log(bytes.base64);
     // a numeric array containing the values of the byte array (i.e. [0xFF, 0x00])
@@ -376,7 +376,7 @@ window.FirebasePlugin.getByteArray("key", function(bytes) {
     console.error(error);
 });
 // or, specify a namespace for the byte array
-window.FirebasePlugin.getByteArray("key", "namespace", function(bytes) {
+window.FCMHMSPlugin.getByteArray("key", "namespace", function(bytes) {
     // a Base64 encoded string that represents the value for "key"
     console.log(bytes.base64);
     // a numeric array containing the values of the byte array (i.e. [0xFF, 0x00])
@@ -390,7 +390,7 @@ window.FirebasePlugin.getByteArray("key", "namespace", function(bytes) {
 
 Get the current state of the FirebaseRemoteConfig singleton object:
 ```
-window.FirebasePlugin.getInfo(function(info) {
+window.FCMHMSPlugin.getInfo(function(info) {
     // the status of the developer mode setting (true/false)
     console.log(info.configSettings.developerModeEnabled);
     // the timestamp (milliseconds since epoch) of the last successful fetch
@@ -413,7 +413,7 @@ Change the settings for the FirebaseRemoteConfig object's operations:
 var settings = {
     developerModeEnabled: true
 }
-window.FirebasePlugin.setConfigSettings(settings);
+window.FCMHMSPlugin.setConfigSettings(settings);
 ```
 
 ### setDefaults (Android only)
@@ -434,9 +434,9 @@ var defaults = {
     mBytes: [0xFF, 0x00]
 }
 // set defaults
-window.FirebasePlugin.setDefaults(defaults);
+window.FCMHMSPlugin.setDefaults(defaults);
 // or, specify a namespace
-window.FirebasePlugin.setDefaults(defaults, "namespace");
+window.FCMHMSPlugin.setDefaults(defaults, "namespace");
 ```
 
 ### startTrace
@@ -444,7 +444,7 @@ window.FirebasePlugin.setDefaults(defaults, "namespace");
 Start a trace.
 
 ```
-window.FirebasePlugin.startTrace("test trace", success, error);
+window.FCMHMSPlugin.startTrace("test trace", success, error);
 ```
 
 ### incrementCounter
@@ -452,7 +452,7 @@ window.FirebasePlugin.startTrace("test trace", success, error);
 To count the performance-related events that occur in your app (such as cache hits or retries), add a line of code similar to the following whenever the event occurs, using a string other than retry to name that event if you are counting a different type of event:
 
 ```
-window.FirebasePlugin.incrementCounter("test trace", "retry", success, error);
+window.FCMHMSPlugin.incrementCounter("test trace", "retry", success, error);
 ```
 
 ### stopTrace
@@ -460,7 +460,7 @@ window.FirebasePlugin.incrementCounter("test trace", "retry", success, error);
 Stop the trace
 
 ```
-window.FirebasePlugin.stopTrace("test trace");
+window.FCMHMSPlugin.stopTrace("test trace");
 ```
 
 ### setAnalyticsCollectionEnabled
@@ -468,7 +468,7 @@ window.FirebasePlugin.stopTrace("test trace");
 Enable/disable analytics collection
 
 ```
-window.FirebasePlugin.setAnalyticsCollectionEnabled(true); // Enables analytics collection
+window.FCMHMSPlugin.setAnalyticsCollectionEnabled(true); // Enables analytics collection
 
-window.FirebasePlugin.setAnalyticsCollectionEnabled(false); // Disables analytics collection
+window.FCMHMSPlugin.setAnalyticsCollectionEnabled(false); // Disables analytics collection
 ```
