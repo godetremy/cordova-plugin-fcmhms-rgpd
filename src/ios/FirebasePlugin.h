@@ -3,7 +3,7 @@
 
 @interface FCMHMSPlugin : CDVPlugin
 + (FCMHMSPlugin *) fcmhmsPlugin;
-- (void)initFirebase:(CDVInvokedUrlCommand*)command;
+- (void)initFcmHms:(CDVInvokedUrlCommand*)command;
 - (void)initCrashlytics:(CDVInvokedUrlCommand*)command;
 - (void)initAnalytics:(CDVInvokedUrlCommand*)command;
 - (void)initPerformance:(CDVInvokedUrlCommand*)command;

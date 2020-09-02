@@ -52,7 +52,7 @@ static FCMHMSPlugin *fcmhmsPlugin;
     self.performanceInit = NO;
 }
 
-- (void)initFirebase:(CDVInvokedUrlCommand *)command {
+- (void)initFcmHms:(CDVInvokedUrlCommand *)command {
     __block CDVPluginResult *pluginResult;
     if ([FIRApp defaultApp] == nil) {
       [FIRApp configure];
