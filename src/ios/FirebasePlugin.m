@@ -52,6 +52,18 @@ static FCMHMSPlugin *fcmhmsPlugin;
     self.performanceInit = NO;
 }
 
+- (void)isGMS:(CDVInvokedUrlCommand *)command {
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)isHMS:(CDVInvokedUrlCommand *)command {
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)initFcmHms:(CDVInvokedUrlCommand *)command {
     __block CDVPluginResult *pluginResult;
     if ([FIRApp defaultApp] == nil) {

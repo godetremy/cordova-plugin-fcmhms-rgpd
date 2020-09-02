@@ -3,6 +3,8 @@
 
 @interface FCMHMSPlugin : CDVPlugin
 + (FCMHMSPlugin *) fcmhmsPlugin;
+- (void)isGMS:(CDVInvokedUrlCommand*)command;
+- (void)isHMS:(CDVInvokedUrlCommand*)command;
 - (void)initFcmHms:(CDVInvokedUrlCommand*)command;
 - (void)initCrashlytics:(CDVInvokedUrlCommand*)command;
 - (void)initAnalytics:(CDVInvokedUrlCommand*)command;
