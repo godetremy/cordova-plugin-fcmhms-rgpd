@@ -54,14 +54,14 @@ static FCMHMSPlugin *fcmhmsPlugin;
 
 - (void)isGMS:(CDVInvokedUrlCommand *)command {
     __block CDVPluginResult *pluginResult;
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:true];
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)isHMS:(CDVInvokedUrlCommand *)command {
     __block CDVPluginResult *pluginResult;
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:false];
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
