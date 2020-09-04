@@ -21,12 +21,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 				<param name="android-package" value="org.apache.cordova.fcmhms.FCMHMSPlugin" />
 				<param name="onload" value="true" />
 			</feature>
-      <feature name="HMSPush">
-        <param name="android-package" value="com.huawei.cordova.hms.push.HMSPush" />
-      </feature>
-      <feature name="CordovaHMSGMSCheckPlugin">
-          <param name="android-package" value="com.huawei.cordovahmsgmscheckplugin.CordovaHMSGMSCheckPlugin" />
-      </feature>
 		</config-file>
 		<config-file target="AndroidManifest.xml" parent="/*">
 				<uses-permission android:name="android.permission.INTERNET" />
@@ -41,7 +35,7 @@ xmlns:android="http://schemas.android.com/apk/res/android">
       <meta-data android:name="push_kit_auto_init_enabled" android:value="false" />
 		</config-file>
 		<config-file target="AndroidManifest.xml" parent="/manifest/application">
-			<service android:name="org.apache.cordova.firebase.FirebasePluginMessagingService">
+			<service android:name="org.apache.cordova.fcmhms.FirebasePluginMessagingService">
 				<intent-filter>
 					<action android:name="com.google.firebase.MESSAGING_EVENT"/>
 				</intent-filter>
@@ -49,7 +43,7 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 			<receiver android:name="org.apache.cordova.fcmhms.OnNotificationOpenReceiver"></receiver>
 		</config-file>
 		<config-file target="AndroidManifest.xml" parent="/manifest/application">
-      <service android:name="com.huawei.cordova.hms.push.CordovaHmsMessageService" android:exported="true">
+      <service android:name="org.apache.cordova.fcmhms.CordovaHmsMessageService" android:exported="true">
         <intent-filter>
           <action android:name="com.huawei.push.action.MESSAGING_EVENT" />
         </intent-filter>
