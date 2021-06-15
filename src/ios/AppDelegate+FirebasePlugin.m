@@ -183,7 +183,7 @@
 
     NSDictionary *mutableUserInfo = [response.notification.request.content.userInfo mutableCopy];
 
-    [mutableUserInfo setValue:@YES forKey:@"tap"];
+    [mutableUserInfo setValue:self.applicationInBackground forKey:@"tap"];
 
     // Print full message.
     NSLog(@"Response %@", mutableUserInfo);

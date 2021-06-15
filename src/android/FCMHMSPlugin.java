@@ -11,6 +11,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import androidx.core.app.NotificationManagerCompat;
+import androidx.annotation.NonNull;
 
 import com.huawei.hms.api.HuaweiApiAvailability;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -20,11 +21,11 @@ import io.fabric.sdk.android.Fabric;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigInfo;
@@ -62,7 +63,7 @@ public class FCMHMSPlugin extends CordovaPlugin {
 
     private FirebaseAnalytics mFirebaseAnalytics;
     private static CordovaWebView appView;
-    private final String TAG = "FCMHMSPlugin";
+    private static String TAG = "FCMHMSPlugin";
     private final String ERRORISGMS = "Cannot get isGMS";
     private final String ERRORISHMS = "Cannot get isHMS";
     private final String ERRORINIT = "FCM or GMS aren't initialised";
@@ -133,9 +134,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
         } else if (action.equals("initPerformance")) {
           this.initPerformance(callbackContext);
           return true;
-        } else if (action.equals("getInstanceId")) {
-            this.getInstanceId(callbackContext);
-            return true;
         } else if (action.equals("getId")) {
             this.getId(callbackContext);
             return true;
@@ -191,10 +189,10 @@ public class FCMHMSPlugin extends CordovaPlugin {
                 this.fetch(callbackContext);
             }
             return true;
-        } else if (action.equals("getByteArray")) {
+        } /*else if (action.equals("getByteArray")) {
             this.getByteArray(callbackContext, args.getString(0));
             return true;
-        } else if (action.equals("getValue")) {
+        }*/ else if (action.equals("getValue")) {
             this.getValue(callbackContext, args.getString(0));
             return true;
         } else if (action.equals("getInfo")) {
@@ -362,15 +360,19 @@ public class FCMHMSPlugin extends CordovaPlugin {
             public void run() {
                 try {
                     if(FCMHMSPlugin.firebaseInit()){
-                      FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( self.cordova.getActivity(),  new OnSuccessListener<InstanceIdResult>() {
+                      cordova.getThreadPool().execute(new Runnable() {
+                        public void run() {
+                            try {
+                                FirebaseMessaging.getInstance().getToken().addOnCompleteListener( new OnCompleteListener<String>() {
                           @Override
-                          public void onSuccess(InstanceIdResult instanceIdResult) {
-                                String token = instanceIdResult.getToken();
-                                if (token != null) {
-                                    FCMHMSPlugin.sendToken(token);
-                                    Log.d(TAG, "onTokenRefresh Token : "+token);
-                                } else {
-                                    Log.d(TAG, "onTokenRefresh failed");
+                                  public void onComplete(Task<String> task){
+                                    if (task.isSuccessful() && task.getResult() != null) {
+                                        FCMHMSPlugin.sendToken(task.getResult());
+                                    }
+                                  }
+                                });
+                            } catch (Exception e) {
+                                handleExceptionWithContext(e, callbackContext);
                                 }
                           }
                       });
@@ -486,42 +488,19 @@ public class FCMHMSPlugin extends CordovaPlugin {
         }
     }
 
-    // DEPRECTED - alias of getToken
-    private void getInstanceId(final CallbackContext callbackContext) {
-        final FCMHMSPlugin self = this;
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    if(FCMHMSPlugin.firebaseInit()){
-                      FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( self.cordova.getActivity(),  new OnSuccessListener<InstanceIdResult>() {
-                          @Override
-                          public void onSuccess(InstanceIdResult instanceIdResult) {
-                                String token = instanceIdResult.getToken();
-                                if (token != null) {
-                                    callbackContext.success(token);
-                                    Log.d(TAG, "getInstanceId Token : "+token);
-                                } else {
-                                    Log.d(TAG, "getInstanceId failed");
-                                }
-                          }
-                      });
-                    } else {
-                      callbackContext.error(ERRORINIT);
-                    }
-                } catch (Exception e) {
-                    callbackContext.error(e.getMessage());
-                }
-            }
-        });
-    }
-
     private void getId(final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 try {
-                  if(FCMHMSPlugin.firebaseInit()){
-                    String id = FirebaseInstanceId.getInstance().getId();
-                    callbackContext.success(id);
+                    if(FCMHMSPlugin.firebaseInit()){
+                    FirebaseInstallations.getInstance().getId().addOnCompleteListener( new OnCompleteListener<String>() {
+                          @Override
+                      public void onComplete(Task<String> task){
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            callbackContext.success(task.getResult());
+                }
+            }
+        });
                   } else {
                     callbackContext.error(ERRORINIT);
                   }
@@ -541,15 +520,19 @@ public class FCMHMSPlugin extends CordovaPlugin {
             public void run() {
                 try {
                   if(FCMHMSPlugin.firebaseInit()){
-                    FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( self.cordova.getActivity(),  new OnSuccessListener<InstanceIdResult>() {
+                    cordova.getThreadPool().execute(new Runnable() {
+                      public void run() {
+                          try {
+                              FirebaseMessaging.getInstance().getToken().addOnCompleteListener( new OnCompleteListener<String>() {
                         @Override
-                        public void onSuccess(InstanceIdResult instanceIdResult) {
-                              String token = instanceIdResult.getToken();
-                              if (token != null) {
-                                  callbackContext.success(token);
-                                  Log.d(TAG, "getInstanceId Token : "+token);
-                              } else {
-                                  Log.d(TAG, "getInstanceId failed");
+                                public void onComplete(Task<String> task){
+                                  if (task.isSuccessful() && task.getResult() != null) {
+                                      callbackContext.success(task.getResult());
+                                  }
+                                }
+                              });
+                          } catch (Exception e) {
+                              handleExceptionWithContext(e, callbackContext);
                               }
                         }
                     });
@@ -669,7 +652,7 @@ public class FCMHMSPlugin extends CordovaPlugin {
             public void run() {
                 try {
                   if(FCMHMSPlugin.firebaseInit()){
-                    FirebaseInstanceId.getInstance().deleteInstanceId();
+                    FirebaseInstallations.getInstance().delete();
                     callbackContext.success();
                   } else {
                     callbackContext.error(ERRORINIT);
@@ -805,9 +788,15 @@ public class FCMHMSPlugin extends CordovaPlugin {
             public void run() {
                 try {
                   if (!FCMHMSPlugin.remoteconfigInit()) {
-                    final boolean activated = FirebaseRemoteConfig.getInstance().activateFetched();
+                  FirebaseRemoteConfig.getInstance().activate()
+                    .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<Boolean>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Boolean> task) {
+                            final boolean activated = task.isSuccessful();
                     FCMHMSPlugin.remoteconfigInit = true;
                     callbackContext.success(String.valueOf(activated));
+                        }
+                    });
                   } else {
                     callbackContext.error(String.valueOf(true));
                   }
@@ -865,7 +854,7 @@ public class FCMHMSPlugin extends CordovaPlugin {
         });
     }
 
-    private void getByteArray(final CallbackContext callbackContext, final String key) {
+    /*private void getByteArray(final CallbackContext callbackContext, final String key) {
       if (FCMHMSPlugin.remoteconfigInit()) {
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
@@ -886,7 +875,7 @@ public class FCMHMSPlugin extends CordovaPlugin {
       } else {
         callbackContext.error(ERRORINITREMOTECONFIG);
       }
-    }
+    }*/
 
     private void getValue(final CallbackContext callbackContext, final String key) {
       if (FCMHMSPlugin.remoteconfigInit()) {
@@ -917,7 +906,7 @@ public class FCMHMSPlugin extends CordovaPlugin {
                     JSONObject info = new JSONObject();
 
                     JSONObject settings = new JSONObject();
-                    settings.put("developerModeEnabled", remoteConfigInfo.getConfigSettings().isDeveloperModeEnabled());
+                    settings.put("developerModeEnabled", new FirebaseRemoteConfigSettings.Builder().getMinimumFetchIntervalInSeconds() == 0);
                     info.put("configSettings", settings);
 
                     info.put("fetchTimeMillis", remoteConfigInfo.getFetchTimeMillis());
@@ -944,8 +933,8 @@ public class FCMHMSPlugin extends CordovaPlugin {
                 try {
                     boolean devMode = config.getBoolean("developerModeEnabled");
                     FirebaseRemoteConfigSettings.Builder settings = new FirebaseRemoteConfigSettings.Builder()
-                            .setDeveloperModeEnabled(devMode);
-                    FirebaseRemoteConfig.getInstance().setConfigSettings(settings.build());
+                            .setMinimumFetchIntervalInSeconds(devMode ? 0 : 3600);
+                    FirebaseRemoteConfig.getInstance().setConfigSettingsAsync(settings.build());
                     callbackContext.success();
                 } catch (Exception e) {
                     if(FCMHMSPlugin.crashlyticsInit()){
@@ -965,7 +954,7 @@ public class FCMHMSPlugin extends CordovaPlugin {
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 try {
-                    FirebaseRemoteConfig.getInstance().setDefaults(defaultsToMap(defaults));
+                    FirebaseRemoteConfig.getInstance().setDefaultsAsync(defaultsToMap(defaults));
                     callbackContext.success();
                 } catch (Exception e) {
                     if(FCMHMSPlugin.crashlyticsInit()){
@@ -1172,5 +1161,12 @@ public class FCMHMSPlugin extends CordovaPlugin {
                 }
             }
         });
+    }
+
+    protected static void handleExceptionWithContext(Exception e, CallbackContext context){
+        String msg = e.toString();
+        Log.e(TAG, msg);
+        Crashlytics.log(msg);
+        context.error(msg);
     }
 }
