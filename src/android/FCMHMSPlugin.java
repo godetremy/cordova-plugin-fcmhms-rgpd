@@ -806,9 +806,15 @@ public class FCMHMSPlugin extends CordovaPlugin {
                     }
                     callbackContext.error(e.getMessage());
                 }
-            }
-        });
-    }
+              } catch (Exception e) {
+                  if(FCMHMSPlugin.crashlyticsInit()){
+                    Crashlytics.logException(e);
+                  }
+                  callbackContext.error(e.getMessage());
+              }
+          }
+      });
+  }
 
     private void fetch(CallbackContext callbackContext) {
         if (FCMHMSPlugin.remoteconfigInit()) {
