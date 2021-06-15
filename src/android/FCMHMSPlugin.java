@@ -785,33 +785,27 @@ public class FCMHMSPlugin extends CordovaPlugin {
 
     private void activateFetched(final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                  if (!FCMHMSPlugin.remoteconfigInit()) {
-                  FirebaseRemoteConfig.getInstance().activate()
-                    .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<Boolean>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Boolean> task) {
-                            final boolean activated = task.isSuccessful();
-                    FCMHMSPlugin.remoteconfigInit = true;
-                    callbackContext.success(String.valueOf(activated));
-                        }
-                    });
-                  } else {
-                    callbackContext.error(String.valueOf(true));
-                  }
-                } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.logException(e);
+          public void run() {
+            try {
+              if (!FCMHMSPlugin.remoteconfigInit()) {
+              FirebaseRemoteConfig.getInstance().activate()
+                .addOnCompleteListener(cordova.getActivity(), new OnCompleteListener<Boolean>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Boolean> task) {
+                        final boolean activated = task.isSuccessful();
+                FCMHMSPlugin.remoteconfigInit = true;
+                callbackContext.success(String.valueOf(activated));
                     }
-                    callbackContext.error(e.getMessage());
-                }
-              } catch (Exception e) {
-                  if(FCMHMSPlugin.crashlyticsInit()){
-                    Crashlytics.logException(e);
-                  }
-                  callbackContext.error(e.getMessage());
+                });
+              } else {
+                callbackContext.error(String.valueOf(true));
               }
+            } catch (Exception e) {
+                if(FCMHMSPlugin.crashlyticsInit()){
+                  Crashlytics.logException(e);
+                }
+                callbackContext.error(e.getMessage());
+            }
           }
       });
   }
