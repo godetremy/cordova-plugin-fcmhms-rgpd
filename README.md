@@ -44,17 +44,6 @@ Hooks do not work with PhoneGap Build. This means you will have to manually make
 ### Google Play Services
 Your build may fail if you are installing multiple plugins that use Google Play Services.  This is caused by the plugins installing different versions of the Google Play Services library.  This can be resolved by installing [cordova-android-play-services-gradle-release](https://github.com/dpa99c/cordova-android-play-services-gradle-release).
 
-## Google Tag Manager
-### Android
-Download your container-config json file from Tag Manager and add a resource-file node in your `config.xml`.
-```
-....
-<platform name="android">
-    <content src="index.html" />
-    <resource-file src="GTM-5MFXXXX.json" target="assets/containers/GTM-5MFXXXX.json" />
-    ...
-```
-
 ## Changing Notification Icon
 The plugin will use notification_icon from drawable resources if it exists, otherwise the default app icon is used.
 To set a big icon and small icon for notifications, define them through drawable nodes.

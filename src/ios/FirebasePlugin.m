@@ -7,7 +7,6 @@
 @import FirebaseMessaging;
 @import FirebaseAnalytics;
 @import FirebaseRemoteConfig;
-@import FirebasePerformance;
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 @import UserNotifications;
@@ -28,14 +27,12 @@
 @synthesize crashlyticsInit;
 @synthesize analyticsInit;
 @synthesize remoteconfigInit;
-@synthesize performanceInit;
 
 static NSInteger const kNotificationStackSize = 10;
 static NSString * const ERRORINITFIREBASE = @"Firebase isn't initialised";
 static NSString * const ERRORINITCRASHLYTICS = @"Crashlytics isn't initialised";
 static NSString * const ERRORINITANALYTICS = @"Analytics isn't initialised";
 static NSString * const ERRORINITREMOTECONFIG = @"RemoteConfig isn't initialised";
-static NSString * const ERRORINITPERFORMANCE = @"Performance isn't initialised";
 static FCMHMSPlugin *fcmhmsPlugin;
 
 + (FCMHMSPlugin *) fcmhmsPlugin {
@@ -49,7 +46,6 @@ static FCMHMSPlugin *fcmhmsPlugin;
     self.crashlyticsInit = NO;
     self.analyticsInit = NO;
     self.remoteconfigInit = NO;
-    self.performanceInit = NO;
 }
 
 - (void)isGMS:(CDVInvokedUrlCommand *)command {
@@ -109,23 +105,6 @@ static FCMHMSPlugin *fcmhmsPlugin;
     } else {
         [FIRAnalytics setAnalyticsCollectionEnabled:YES];
         self.analyticsInit = YES;
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    }
-
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (void)initPerformance:(CDVInvokedUrlCommand *)command {
-    __block CDVPluginResult *pluginResult;
-    if ([FIRApp defaultApp] == nil) {
-      [FIRApp configure];
-    }
-
-    if ([FIRPerformance sharedInstance] == nil) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    } else {
-        [[FIRPerformance sharedInstance] setDataCollectionEnabled:YES];
-        self.performanceInit = YES;
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
 
@@ -477,83 +456,6 @@ static FCMHMSPlugin *fcmhmsPlugin;
     }];
 }
 
-//
-// Performace
-//
-- (void)startTrace:(CDVInvokedUrlCommand *)command {
-
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult *pluginResult;
-        if(self.performanceInit){
-          NSString* traceName = [command.arguments objectAtIndex:0];
-          FIRTrace *trace = [self.traces objectForKey:traceName];
-
-          if ( self.traces == nil) {
-              self.traces = [NSMutableDictionary new];
-          }
-
-          if (trace == nil) {
-              trace = [FIRPerformance startTraceWithName:traceName];
-              [self.traces setObject:trace forKey:traceName ];
-
-          }
-
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        } else {
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITPERFORMANCE];
-        }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-
-    }];
-}
-
-- (void)incrementCounter:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult *pluginResult;
-        if(self.performanceInit){
-          NSString* traceName = [command.arguments objectAtIndex:0];
-          NSString* counterNamed = [command.arguments objectAtIndex:1];
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-          FIRTrace *trace = (FIRTrace*)[self.traces objectForKey:traceName];
-
-          if (trace != nil) {
-              [trace incrementMetric:counterNamed byInt:1];
-              [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-          } else {
-              pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Trace not found"];
-          }
-        } else {
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITPERFORMANCE];
-        }
-
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-
-    }];
-}
-
-- (void)stopTrace:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult *pluginResult;
-        if(self.performanceInit){
-          NSString* traceName = [command.arguments objectAtIndex:0];
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-          FIRTrace *trace = [self.traces objectForKey:traceName];
-
-          if (trace != nil) {
-              [trace stop];
-              [self.traces removeObjectForKey:traceName];
-              [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-          } else {
-              pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Trace not found"];
-          }
-        } else {
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITPERFORMANCE];
-        }
-
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
 - (void)setAnalyticsCollectionEnabled:(CDVInvokedUrlCommand *)command {
      [self.commandDelegate runInBackground:^{
         CDVPluginResult *pluginResult;
@@ -566,18 +468,6 @@ static FCMHMSPlugin *fcmhmsPlugin;
           pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITANALYTICS];
         }
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-     }];
-}
-
-- (void)setPerformanceCollectionEnabled:(CDVInvokedUrlCommand *)command {
-     [self.commandDelegate runInBackground:^{
-         BOOL enabled = [[command argumentAtIndex:0] boolValue];
-
-         [[FIRPerformance sharedInstance] setDataCollectionEnabled:enabled];
-
-         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-
-         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
      }];
 }
 

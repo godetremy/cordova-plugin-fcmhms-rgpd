@@ -8,7 +8,6 @@
 - (void)initFcmHms:(CDVInvokedUrlCommand*)command;
 - (void)initCrashlytics:(CDVInvokedUrlCommand*)command;
 - (void)initAnalytics:(CDVInvokedUrlCommand*)command;
-- (void)initPerformance:(CDVInvokedUrlCommand*)command;
 - (void)initRemoteConfig:(CDVInvokedUrlCommand*)command;
 - (void)getInstanceId:(CDVInvokedUrlCommand*)command;
 - (void)getId:(CDVInvokedUrlCommand*)command;
@@ -32,11 +31,7 @@
 - (void)fetch:(CDVInvokedUrlCommand*)command;
 - (void)activateFetched:(CDVInvokedUrlCommand*)command;
 - (void)getValue:(CDVInvokedUrlCommand*)command;
-- (void)startTrace:(CDVInvokedUrlCommand*)command;
-- (void)incrementCounter:(CDVInvokedUrlCommand*)command;
-- (void)stopTrace:(CDVInvokedUrlCommand*)command;
 - (void)setAnalyticsCollectionEnabled:(CDVInvokedUrlCommand*)command;
-- (void)setPerformanceCollectionEnabled:(CDVInvokedUrlCommand*)command;
 - (void)clearAllNotifications:(CDVInvokedUrlCommand *)command;
 @property (nonatomic, copy) NSString *notificationCallbackId;
 @property (nonatomic, copy) NSString *tokenRefreshCallbackId;
@@ -46,6 +41,5 @@
 @property (atomic, assign) BOOL crashlyticsInit;
 @property (atomic, assign) BOOL analyticsInit;
 @property (atomic, assign) BOOL remoteconfigInit;
-@property (atomic, assign) BOOL performanceInit;
 
 @end

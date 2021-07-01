@@ -31,8 +31,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigInfo;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigValue;
-import com.google.firebase.perf.FirebasePerformance;
-import com.google.firebase.perf.metrics.Trace;
 
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
@@ -70,7 +68,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
     private final String ERRORINITCRASHLYTICS = "Crashlytics isn't initialised";
     private final String ERRORINITANALYTICS = "Analytics isn't initialised";
     private final String ERRORINITREMOTECONFIG = "RemoteConfig isn't initialised";
-    private final String ERRORINITPERFORMANCE = "Performance isn't initialised";
     protected static final String KEY = "badge";
 
     private static boolean gmsAvailability = false;
@@ -80,7 +77,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
     private static boolean crashlyticsInit = false;
     private static boolean analyticsInit = false;
     private static boolean remoteconfigInit = false;
-    private static boolean performanceInit = false;
     private static boolean inBackground = true;
     private static ArrayList<Bundle> notificationStack = null;
     private static CallbackContext notificationCallbackContext;
@@ -130,9 +126,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
           return true;
         } else if (action.equals("initAnalytics")) {
           this.initAnalytics(callbackContext);
-          return true;
-        } else if (action.equals("initPerformance")) {
-          this.initPerformance(callbackContext);
           return true;
         } else if (action.equals("getId")) {
             this.getId(callbackContext);
@@ -204,21 +197,9 @@ public class FCMHMSPlugin extends CordovaPlugin {
         } else if (action.equals("setDefaults")) {
             this.setDefaults(callbackContext, args.getJSONObject(0));
             return true;
-        } else if (action.equals("startTrace")) {
-            this.startTrace(callbackContext, args.getString(0));
-            return true;
-        } else if (action.equals("incrementCounter")) {
-            this.incrementCounter(callbackContext, args.getString(0), args.getString(1));
-            return true;
-        } else if (action.equals("stopTrace")) {
-            this.stopTrace(callbackContext, args.getString(0));
-            return true;
         } else if (action.equals("setAnalyticsCollectionEnabled")) {
             this.setAnalyticsCollectionEnabled(callbackContext, args.getBoolean(0));
             return true;
-        } else if (action.equals("setPerformanceCollectionEnabled")) {
-          this.setPerformanceCollectionEnabled(callbackContext, args.getBoolean(0));
-          return true;
         } else if (action.equals("clearAllNotifications")) {
             this.clearAllNotifications(callbackContext);
             return true;
@@ -323,22 +304,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
             Crashlytics.logException(e);
           }
           callbackContext.error(ERRORINITANALYTICS);
-        }
-    }
-
-    private void initPerformance(final CallbackContext callbackContext) {
-        final Context context = this.cordova.getActivity().getApplicationContext();
-
-        Log.d(TAG, "Initialising Performance");
-        try {
-          FirebasePerformance.getInstance().setPerformanceCollectionEnabled(true);
-          FCMHMSPlugin.performanceInit = true;
-          callbackContext.success();
-        } catch(Exception e) {
-          if(FCMHMSPlugin.crashlyticsInit()){
-            Crashlytics.logException(e);
-          }
-          callbackContext.error(ERRORINITPERFORMANCE);
         }
     }
 
@@ -468,10 +433,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
 
     public static boolean remoteconfigInit() {
         return FCMHMSPlugin.remoteconfigInit;
-    }
-
-    public static boolean performanceInit() {
-        return FCMHMSPlugin.performanceInit;
     }
 
     public static boolean hasNotificationsCallback() {
@@ -998,110 +959,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
         return map;
     }
 
-    //
-    // Firebase Performace
-    //
-
-    private HashMap<String, Trace> traces = new HashMap<String, Trace>();
-
-    private void startTrace(final CallbackContext callbackContext, final String name) {
-        final FCMHMSPlugin self = this;
-        if(FCMHMSPlugin.performanceInit()){
-          cordova.getThreadPool().execute(new Runnable() {
-              public void run() {
-                  try {
-
-                      Trace myTrace = null;
-                      if (self.traces.containsKey(name)) {
-                          myTrace = self.traces.get(name);
-                      }
-
-                      if (myTrace == null) {
-                          myTrace = FirebasePerformance.getInstance().newTrace(name);
-                          myTrace.start();
-                          self.traces.put(name, myTrace);
-                      }
-
-                      callbackContext.success();
-                  } catch (Exception e) {
-                      if(FCMHMSPlugin.crashlyticsInit()){
-                        Crashlytics.logException(e);
-                      }
-                      e.printStackTrace();
-                      callbackContext.error(e.getMessage());
-                  }
-              }
-          });
-        } else {
-          callbackContext.error(ERRORINITPERFORMANCE);
-        }
-    }
-
-    private void incrementCounter(final CallbackContext callbackContext, final String name, final String counterNamed) {
-        final FCMHMSPlugin self = this;
-        if(FCMHMSPlugin.performanceInit()){
-          cordova.getThreadPool().execute(new Runnable() {
-              public void run() {
-                  try {
-
-                      Trace myTrace = null;
-                      if (self.traces.containsKey(name)) {
-                          myTrace = self.traces.get(name);
-                      }
-
-                      if (myTrace != null && myTrace instanceof Trace) {
-                          myTrace.incrementMetric(counterNamed, 1);
-                          callbackContext.success();
-                      } else {
-                          callbackContext.error("Trace not found");
-                      }
-                  } catch (Exception e) {
-                      if(FCMHMSPlugin.crashlyticsInit()){
-                        Crashlytics.logException(e);
-                      }
-                      e.printStackTrace();
-                      callbackContext.error(e.getMessage());
-                  }
-              }
-          });
-        } else {
-          callbackContext.error(ERRORINITPERFORMANCE);
-        }
-    }
-
-    private void stopTrace(final CallbackContext callbackContext, final String name) {
-        final FCMHMSPlugin self = this;
-        if(FCMHMSPlugin.performanceInit()){
-          cordova.getThreadPool().execute(new Runnable() {
-              public void run() {
-                  try {
-
-                      Trace myTrace = null;
-                      if (self.traces.containsKey(name)) {
-                          myTrace = self.traces.get(name);
-                      }
-
-                      if (myTrace != null && myTrace instanceof Trace) { //
-                          myTrace.stop();
-                          self.traces.remove(name);
-                          callbackContext.success();
-                      } else {
-                          callbackContext.error("Trace not found");
-                      }
-                  } catch (Exception e) {
-                      if(FCMHMSPlugin.crashlyticsInit()){
-                        Crashlytics.logException(e);
-                      }
-                      e.printStackTrace();
-                      callbackContext.error(e.getMessage());
-                  }
-              }
-          });
-        } else {
-          callbackContext.error(ERRORINITPERFORMANCE);
-        }
-    }
-
     private void setAnalyticsCollectionEnabled(final CallbackContext callbackContext, final boolean enabled) {
         final FCMHMSPlugin self = this;
         if(FCMHMSPlugin.analyticsInit()){
@@ -1121,28 +978,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
           });
         } else {
           callbackContext.error(ERRORINITANALYTICS);
-        }
-    }
-
-    private void setPerformanceCollectionEnabled(final CallbackContext callbackContext, final boolean enabled) {
-        final FCMHMSPlugin self = this;
-        if(FCMHMSPlugin.performanceInit()){
-          cordova.getThreadPool().execute(new Runnable() {
-              public void run() {
-                  try {
-                      FirebasePerformance.getInstance().setPerformanceCollectionEnabled(enabled);
-                      callbackContext.success();
-                  } catch (Exception e) {
-                      if(FCMHMSPlugin.crashlyticsInit()){
-                        Crashlytics.log(e.getMessage());
-                      }
-                      e.printStackTrace();
-                      callbackContext.error(e.getMessage());
-                  }
-              }
-          });
-        } else {
-          callbackContext.error(ERRORINITPERFORMANCE);
         }
     }
 
