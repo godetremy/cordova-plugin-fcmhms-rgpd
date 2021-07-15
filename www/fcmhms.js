@@ -24,10 +24,6 @@ exports.initPerformance = function (success, error) {
   exec(success, error, "FCMHMSPlugin", "initPerformance", []);
 };
 
-exports.initRemoteConfig = function (success, error) {
-  exec(success, error, "FCMHMSPlugin", "initRemoteConfig", []);
-};
-
 exports.getVerificationID = function (number, success, error) {
   exec(success, error, "FCMHMSPlugin", "getVerificationID", [number]);
 };
@@ -100,21 +96,6 @@ exports.setUserProperty = function (name, value, success, error) {
   exec(success, error, "FCMHMSPlugin", "setUserProperty", [name, value]);
 };
 
-exports.activateFetched = function (success, error) {
-  exec(success, error, "FCMHMSPlugin", "activateFetched", []);
-};
-
-exports.fetch = function (cacheExpirationSeconds, success, error) {
-  var args = [];
-  if (typeof cacheExpirationSeconds === 'number') {
-    args.push(cacheExpirationSeconds);
-  } else {
-    error = success;
-    success = cacheExpirationSeconds;
-  }
-  exec(success, error, "FCMHMSPlugin", "fetch", args);
-};
-
 exports.getByteArray = function (key, namespace, success, error) {
   var args = [key];
   if (typeof namespace === 'string') {
@@ -124,36 +105,6 @@ exports.getByteArray = function (key, namespace, success, error) {
     success = namespace;
   }
   exec(success, error, "FCMHMSPlugin", "getByteArray", args);
-};
-
-exports.getValue = function (key, namespace, success, error) {
-  var args = [key];
-  if (typeof namespace === 'string') {
-    args.push(namespace);
-  } else {
-    error = success;
-    success = namespace;
-  }
-  exec(success, error, "FCMHMSPlugin", "getValue", args);
-};
-
-exports.getInfo = function (success, error) {
-  exec(success, error, "FCMHMSPlugin", "getInfo", []);
-};
-
-exports.setConfigSettings = function (settings, success, error) {
-  exec(success, error, "FCMHMSPlugin", "setConfigSettings", [settings]);
-};
-
-exports.setDefaults = function (defaults, namespace, success, error) {
-  var args = [defaults];
-  if (typeof namespace === 'string') {
-    args.push(namespace);
-  } else {
-    error = success;
-    success = namespace;
-  }
-  exec(success, error, "FCMHMSPlugin", "setDefaults", args);
 };
 
 exports.startTrace = function (name, success, error) {

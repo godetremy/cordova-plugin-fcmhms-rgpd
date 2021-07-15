@@ -1,26 +1,42 @@
 buildscript {
     repositories {
         google()
-        mavenCentral()
         // huawei maven
+        jcenter()
         maven {
-          url "http://developer.huawei.com/repo/"
+          url "https://developer.huawei.com/repo/"
         }
     }
 }
 repositories {
-    mavenCentral()
+    google()
+    jcenter()
     maven {
-        url "https://maven.google.com"
-    }
-    maven {
-        url "http://developer.huawei.com/repo/"
+        url "https://developer.huawei.com/repo/"
     }
 }
 
 dependencies {
-    compile 'me.leolin:ShortcutBadger:1.1.+@aar'
-    compile('com.crashlytics.sdk.android:crashlytics:2.+@aar') {
-       transitive = true
-    }
+    implementation platform('com.google.firebase:firebase-bom:28.2.1')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-messaging'
 }
+
+cdvPluginPostBuildExtras.add({
+    afterEvaluate {
+        rootProject.subprojects {
+            if (name == "app") {
+                if (!plugins.hasPlugin('com.google.gms.google-services')) {
+                    apply plugin: 'com.google.gms.google-services'
+                }
+                if (!plugins.hasPlugin('com.google.firebase.crashlytics')) {
+                    apply plugin: 'com.google.firebase.crashlytics'
+                }
+                if (!plugins.hasPlugin('com.huawei.agconnect')) {
+                    apply plugin: 'com.huawei.agconnect'
+                }
+            }
+        }
+    }
+})

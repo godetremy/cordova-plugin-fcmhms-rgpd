@@ -6,7 +6,6 @@
 @import FirebaseInstanceID;
 @import FirebaseMessaging;
 @import FirebaseAnalytics;
-@import FirebaseRemoteConfig;
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 @import UserNotifications;
@@ -26,7 +25,6 @@
 @synthesize firebaseInit;
 @synthesize crashlyticsInit;
 @synthesize analyticsInit;
-@synthesize remoteconfigInit;
 
 static NSInteger const kNotificationStackSize = 10;
 static NSString * const ERRORINITFIREBASE = @"Firebase isn't initialised";
@@ -45,7 +43,6 @@ static FCMHMSPlugin *fcmhmsPlugin;
     self.firebaseInit = NO;
     self.crashlyticsInit = NO;
     self.analyticsInit = NO;
-    self.remoteconfigInit = NO;
 }
 
 - (void)isGMS:(CDVInvokedUrlCommand *)command {
@@ -109,10 +106,6 @@ static FCMHMSPlugin *fcmhmsPlugin;
     }
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (void)initRemoteConfig:(CDVInvokedUrlCommand *)command {
-    [self activateFetched:command];
 }
 
 - (void)getId:(CDVInvokedUrlCommand *)command {
@@ -389,69 +382,6 @@ static FCMHMSPlugin *fcmhmsPlugin;
         } else {
           pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITANALYTICS];
         }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
-- (void)fetch:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        if(self.remoteconfigInit){
-          FIRRemoteConfig* remoteConfig = [FIRRemoteConfig remoteConfig];
-
-          if ([command.arguments count] > 0) {
-              int expirationDuration = [[command.arguments objectAtIndex:0] intValue];
-
-              [remoteConfig fetchWithExpirationDuration:expirationDuration completionHandler:^(FIRRemoteConfigFetchStatus status, NSError * _Nullable error) {
-                  if (status == FIRRemoteConfigFetchStatusSuccess) {
-                      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-                      [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-                  }
-              }];
-          } else {
-              [remoteConfig fetchWithCompletionHandler:^(FIRRemoteConfigFetchStatus status, NSError * _Nullable error) {
-                  if (status == FIRRemoteConfigFetchStatusSuccess) {
-                      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-                      [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-                  }
-              }];
-          }
-        } else {
-          CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITREMOTECONFIG];
-          [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }
-    }];
-}
-
-- (void)activateFetched:(CDVInvokedUrlCommand *)command {
-     [self.commandDelegate runInBackground:^{
-        FIRRemoteConfig* remoteConfig = [FIRRemoteConfig remoteConfig];
-         BOOL activated = [remoteConfig activateFetched];
-         self.remoteconfigInit = activated;
-         CDVPluginResult *pluginResult;
-
-         if (activated) {
-             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-         } else {
-             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-         }
-
-         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-     }];
-}
-
-- (void)getValue:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult *pluginResult;
-        NSString* key = [command.arguments objectAtIndex:0];
-
-        if(self.remoteconfigInit){
-          FIRRemoteConfig* remoteConfig = [FIRRemoteConfig remoteConfig];
-          NSString* value = remoteConfig[key].stringValue;
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:value];
-        } else {
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITREMOTECONFIG];
-        }
-
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
