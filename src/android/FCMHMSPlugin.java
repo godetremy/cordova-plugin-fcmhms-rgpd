@@ -21,10 +21,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
@@ -48,20 +46,13 @@ import java.util.Set;
 // Firebase PhoneAuth
 import java.util.concurrent.TimeUnit;
 
-import com.google.firebase.FirebaseException;
-import com.google.firebase.FirebaseTooManyRequestsException;
-
 public class FCMHMSPlugin extends CordovaPlugin {
 
-    private FirebaseAnalytics mFirebaseAnalytics;
-    private static FirebaseCrashlytics Crashlytics;
     private static CordovaWebView appView;
     private static String TAG = "FCMHMSPlugin";
     private final String ERRORISGMS = "Cannot get isGMS";
     private final String ERRORISHMS = "Cannot get isHMS";
     private final String ERRORINIT = "FCM or GMS aren't initialised";
-    private final String ERRORINITCRASHLYTICS = "Crashlytics isn't initialised";
-    private final String ERRORINITANALYTICS = "Analytics isn't initialised";
     private final String ERRORINITREMOTECONFIG = "RemoteConfig isn't initialised";
     protected static final String KEY = "badge";
 
@@ -69,8 +60,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
     private static boolean hmsAvailability = false;
     private static boolean firebaseInit = false;
     private static boolean hmsInit = false;
-    private static boolean crashlyticsInit = false;
-    private static boolean analyticsInit = false;
     private static boolean inBackground = true;
     private static ArrayList<Bundle> notificationStack = null;
     private static CallbackContext notificationCallbackContext;
@@ -115,12 +104,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
         } else if (action.equals("initFcmHms")) {
           this.initFcmHms(callbackContext);
           return true;
-        } else if (action.equals("initCrashlytics")) {
-          this.initCrashlytics(callbackContext);
-          return true;
-        } else if (action.equals("initAnalytics")) {
-          this.initAnalytics(callbackContext);
-          return true;
         } else if (action.equals("getId")) {
             this.getId(callbackContext);
             return true;
@@ -150,24 +133,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
             return true;
         } else if (action.equals("onTokenRefresh")) {
             this.onTokenRefresh(callbackContext);
-            return true;
-        } else if (action.equals("logEvent")) {
-            this.logEvent(callbackContext, args.getString(0), args.getJSONObject(1));
-            return true;
-        } else if (action.equals("logError")) {
-            this.logError(callbackContext, args.getString(0));
-            return true;
-        } else if (action.equals("setScreenName")) {
-            this.setScreenName(callbackContext, args.getString(0));
-            return true;
-        } else if (action.equals("setUserId")) {
-            this.setUserId(callbackContext, args.getString(0));
-            return true;
-        } else if (action.equals("setUserProperty")) {
-            this.setUserProperty(callbackContext, args.getString(0), args.getString(1));
-            return true;
-        } else if (action.equals("setAnalyticsCollectionEnabled")) {
-            this.setAnalyticsCollectionEnabled(callbackContext, args.getBoolean(0));
             return true;
         } else if (action.equals("clearAllNotifications")) {
             this.clearAllNotifications(callbackContext);
@@ -239,40 +204,7 @@ public class FCMHMSPlugin extends CordovaPlugin {
           }
           callbackContext.success();
         } catch(Exception e) {
-          if(FCMHMSPlugin.crashlyticsInit()){
-            Crashlytics.recordException(e);
-          }
           callbackContext.error(ERRORINIT);
-        }
-    }
-
-    private void initCrashlytics(final CallbackContext callbackContext) {
-        final Context context = this.cordova.getActivity().getApplicationContext();
-
-        Log.d(TAG, "Initialising Crashlytics");
-        try {
-          Crashlytics = FirebaseCrashlytics.getInstance();
-          FCMHMSPlugin.crashlyticsInit = true;
-          callbackContext.success();
-        } catch(Exception e) {
-          callbackContext.error(ERRORINITCRASHLYTICS);
-        }
-    }
-
-    private void initAnalytics(final CallbackContext callbackContext) {
-        final Context context = this.cordova.getActivity().getApplicationContext();
-
-        Log.d(TAG, "Initialising Analytics");
-        try {
-          mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
-          mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
-          FCMHMSPlugin.analyticsInit = true;
-          callbackContext.success();
-        } catch(Exception e) {
-          if(FCMHMSPlugin.crashlyticsInit()){
-            Crashlytics.recordException(e);
-          }
-          callbackContext.error(ERRORINITANALYTICS);
         }
     }
 
@@ -314,9 +246,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
                       callbackContext.error(ERRORINIT);
                     }
                 } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
                     callbackContext.error(e.getMessage());
                 }
             }
@@ -349,9 +278,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
                 try {
                     json.put(key, bundle.get(key));
                 } catch (JSONException e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
                     callbackContext.error(e.getMessage());
                     return;
                 }
@@ -392,14 +318,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
         return FCMHMSPlugin.firebaseInit || FCMHMSPlugin.hmsInit;
     }
 
-    public static boolean crashlyticsInit() {
-        return FCMHMSPlugin.crashlyticsInit;
-    }
-
-    public static boolean analyticsInit() {
-        return FCMHMSPlugin.analyticsInit;
-    }
-
     public static boolean hasNotificationsCallback() {
         return FCMHMSPlugin.notificationCallbackContext != null;
     }
@@ -431,9 +349,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
                     callbackContext.error(ERRORINIT);
                   }
                 } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
                     callbackContext.error(e.getMessage());
                 }
             }
@@ -474,9 +389,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
                     callbackContext.error(ERRORINIT);
                   }
                 } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
                     callbackContext.error(e.getMessage());
                 }
             }
@@ -494,9 +406,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
                     object.put("isEnabled", areNotificationsEnabled);
                     callbackContext.success(object);
                 } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
                     callbackContext.error(e.getMessage());
                 }
             }
@@ -514,9 +423,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
                     ShortcutBadger.applyCount(context, number);
                     callbackContext.success();
                 } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
                     callbackContext.error(e.getMessage());
                 }
             }
@@ -532,9 +438,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
                     int number = settings.getInt(KEY, 0);
                     callbackContext.success(number);
                 } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
                     callbackContext.error(e.getMessage());
                 }
             }
@@ -548,9 +451,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
                     FirebaseMessaging.getInstance().subscribeToTopic(topic);
                     callbackContext.success();
                 } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
                     callbackContext.error(e.getMessage());
                 }
             }
@@ -564,9 +464,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
                     FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
                     callbackContext.success();
                 } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
                     callbackContext.error(e.getMessage());
                 }
             }
@@ -584,129 +481,10 @@ public class FCMHMSPlugin extends CordovaPlugin {
                     callbackContext.error(ERRORINIT);
                   }
                 } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
                     callbackContext.error(e.getMessage());
                 }
             }
         });
-    }
-
-    private void logEvent(final CallbackContext callbackContext, final String name, final JSONObject params)
-            throws JSONException {
-        final Bundle bundle = new Bundle();
-        Iterator iter = params.keys();
-        while (iter.hasNext()) {
-            String key = (String) iter.next();
-            Object value = params.get(key);
-
-            if (value instanceof Integer || value instanceof Double) {
-                bundle.putFloat(key, ((Number) value).floatValue());
-            } else {
-                bundle.putString(key, value.toString());
-            }
-        }
-
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    if(FCMHMSPlugin.analyticsInit()){
-                      mFirebaseAnalytics.logEvent(name, bundle);
-                      callbackContext.success();
-                    } else {
-                      callbackContext.error(ERRORINITANALYTICS);
-                    }
-                } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
-                    callbackContext.error(e.getMessage());
-                }
-            }
-        });
-    }
-
-    private void logError(final CallbackContext callbackContext, final String message) throws JSONException {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(new Exception(message));
-                      callbackContext.success(1);
-                    } else {
-                      callbackContext.error(ERRORINITCRASHLYTICS);
-                    }
-                } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
-                    e.printStackTrace();
-                    callbackContext.error(e.getMessage());
-                }
-            }
-        });
-    }
-
-    private void setScreenName(final CallbackContext callbackContext, final String name) {
-        // This must be called on the main thread
-        cordova.getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                try {
-                  if(FCMHMSPlugin.analyticsInit()){
-                    mFirebaseAnalytics.setCurrentScreen(cordova.getActivity(), name, null);
-                    callbackContext.success();
-                  } else {
-                    callbackContext.error(ERRORINITANALYTICS);
-                  }
-                } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
-                    callbackContext.error(e.getMessage());
-                }
-            }
-        });
-    }
-
-    private void setUserId(final CallbackContext callbackContext, final String id) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                  if(FCMHMSPlugin.analyticsInit()){
-                    mFirebaseAnalytics.setUserId(id);
-                    callbackContext.success();
-                  } else {
-                    callbackContext.error(ERRORINITANALYTICS);
-                  }
-                } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
-                    callbackContext.error(e.getMessage());
-                }
-            }
-        });
-    }
-
-    private void setUserProperty(final CallbackContext callbackContext, final String name, final String value) {
-      if(FCMHMSPlugin.analyticsInit()){
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    mFirebaseAnalytics.setUserProperty(name, value);
-                    callbackContext.success();
-                } catch (Exception e) {
-                    if(FCMHMSPlugin.crashlyticsInit()){
-                      Crashlytics.recordException(e);
-                    }
-                    callbackContext.error(e.getMessage());
-                }
-            }
-        });
-      } else {
-        callbackContext.error(ERRORINITANALYTICS);
-      }
     }
 
     private static Map<String, Object> defaultsToMap(JSONObject object) throws JSONException {
@@ -738,28 +516,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
         return map;
     }
 
-    private void setAnalyticsCollectionEnabled(final CallbackContext callbackContext, final boolean enabled) {
-        final FCMHMSPlugin self = this;
-        if(FCMHMSPlugin.analyticsInit()){
-          cordova.getThreadPool().execute(new Runnable() {
-              public void run() {
-                  try {
-                      mFirebaseAnalytics.setAnalyticsCollectionEnabled(enabled);
-                      callbackContext.success();
-                  } catch (Exception e) {
-                      if(FCMHMSPlugin.crashlyticsInit()){
-                        Crashlytics.recordException(e);
-                      }
-                      e.printStackTrace();
-                      callbackContext.error(e.getMessage());
-                  }
-              }
-          });
-        } else {
-          callbackContext.error(ERRORINITANALYTICS);
-        }
-    }
-
     public void clearAllNotifications(final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
@@ -769,9 +525,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
                     nm.cancelAll();
                     callbackContext.success();
                 } catch (Exception e) {
-                  if(FCMHMSPlugin.crashlyticsInit()){
-                    Crashlytics.recordException(e);
-                  }
                 }
             }
         });
@@ -780,7 +533,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
     protected static void handleExceptionWithContext(Exception e, CallbackContext context){
         String msg = e.toString();
         Log.e(TAG, msg);
-        Crashlytics.recordException(e);
         context.error(msg);
     }
 }

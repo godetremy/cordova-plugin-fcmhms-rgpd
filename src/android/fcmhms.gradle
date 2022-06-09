@@ -17,9 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation platform('com.google.firebase:firebase-bom:28.2.1')
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation platform('com.google.firebase:firebase-bom:+')
     implementation 'com.google.firebase:firebase-messaging'
 }
 
@@ -29,9 +27,6 @@ cdvPluginPostBuildExtras.add({
             if (name == "app") {
                 if (!plugins.hasPlugin('com.google.gms.google-services')) {
                     apply plugin: 'com.google.gms.google-services'
-                }
-                if (!plugins.hasPlugin('com.google.firebase.crashlytics')) {
-                    apply plugin: 'com.google.firebase.crashlytics'
                 }
                 if (!plugins.hasPlugin('com.huawei.agconnect')) {
                     apply plugin: 'com.huawei.agconnect'

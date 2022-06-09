@@ -2,10 +2,8 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
 #import "Firebase.h"
-@import FirebaseCrashlytics;
 @import FirebaseInstanceID;
 @import FirebaseMessaging;
-@import FirebaseAnalytics;
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 @import UserNotifications;
@@ -23,13 +21,9 @@
 @synthesize traces;
 
 @synthesize firebaseInit;
-@synthesize crashlyticsInit;
-@synthesize analyticsInit;
 
 static NSInteger const kNotificationStackSize = 10;
 static NSString * const ERRORINITFIREBASE = @"Firebase isn't initialised";
-static NSString * const ERRORINITCRASHLYTICS = @"Crashlytics isn't initialised";
-static NSString * const ERRORINITANALYTICS = @"Analytics isn't initialised";
 static NSString * const ERRORINITREMOTECONFIG = @"RemoteConfig isn't initialised";
 static FCMHMSPlugin *fcmhmsPlugin;
 
@@ -41,8 +35,6 @@ static FCMHMSPlugin *fcmhmsPlugin;
     NSLog(@"Starting Firebase plugin");
     fcmhmsPlugin = self;
     self.firebaseInit = NO;
-    self.crashlyticsInit = NO;
-    self.analyticsInit = NO;
 }
 
 - (void)isGMS:(CDVInvokedUrlCommand *)command {
@@ -69,39 +61,6 @@ static FCMHMSPlugin *fcmhmsPlugin;
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     } else {
         self.firebaseInit = YES;
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    }
-
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (void)initCrashlytics:(CDVInvokedUrlCommand *)command {
-    __block CDVPluginResult *pluginResult;
-    if ([FIRApp defaultApp] == nil) {
-      [FIRApp configure];
-    }
-
-    if ([FIRCrashlytics crashlytics] == nil) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    } else {
-        self.crashlyticsInit = YES;
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    }
-
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (void)initAnalytics:(CDVInvokedUrlCommand *)command {
-    __block CDVPluginResult *pluginResult;
-    if ([FIRApp defaultApp] == nil) {
-      [FIRApp configure];
-    }
-
-    if ([FIRAnalytics appInstanceID] == nil) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    } else {
-        [FIRAnalytics setAnalyticsCollectionEnabled:YES];
-        self.analyticsInit = YES;
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
 
@@ -301,104 +260,6 @@ static FCMHMSPlugin *fcmhmsPlugin;
         [pluginResult setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.tokenRefreshCallbackId];
     }
-}
-
-- (void)logEvent:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult *pluginResult;
-        NSString* name = [command.arguments objectAtIndex:0];
-
-        NSString *description = NSLocalizedString([command argumentAtIndex:1 withDefault:@"No Message Provided"], nil);
-        NSDictionary *parameters = @{ NSLocalizedDescriptionKey: description };
-
-        if(self.analyticsInit){
-          [FIRAnalytics logEventWithName:name parameters:parameters];
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        } else {
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITANALYTICS];
-        }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
-- (void)logError:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult *pluginResult;
-        NSString* errorMessage = [command.arguments objectAtIndex:0];
-        if(self.crashlyticsInit){
-          [[FIRCrashlytics crashlytics] logWithFormat:@"%@", errorMessage];
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        } else {
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITCRASHLYTICS];
-        }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
-- (void)setScreenName:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult *pluginResult;
-        NSString* name = [command.arguments objectAtIndex:0];
-
-        if(self.analyticsInit){
-          dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-            dispatch_async(dispatch_get_main_queue(), ^(void){
-              [FIRAnalytics setScreenName:name screenClass:NULL];
-            });
-          });
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        } else {
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITANALYTICS];
-        }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
-- (void)setUserId:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult *pluginResult;
-        NSString* id = [command.arguments objectAtIndex:0];
-
-        if(self.analyticsInit){
-          [FIRAnalytics setUserID:id];
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        } else {
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITANALYTICS];
-        }
-
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
-- (void)setUserProperty:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        CDVPluginResult *pluginResult;
-        NSString* name = [command.arguments objectAtIndex:0];
-        NSString* value = [command.arguments objectAtIndex:1];
-
-        if(self.analyticsInit){
-          [FIRAnalytics setUserPropertyString:value forName:name];
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        } else {
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITANALYTICS];
-        }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    }];
-}
-
-- (void)setAnalyticsCollectionEnabled:(CDVInvokedUrlCommand *)command {
-     [self.commandDelegate runInBackground:^{
-        CDVPluginResult *pluginResult;
-        BOOL enabled = [[command argumentAtIndex:0] boolValue];
-
-        if(self.analyticsInit){
-          [FIRAnalytics setAnalyticsCollectionEnabled:enabled];
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        } else {
-          pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITANALYTICS];
-        }
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-     }];
 }
 
 - (void)clearAllNotifications:(CDVInvokedUrlCommand *)command {

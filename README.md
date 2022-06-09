@@ -1,6 +1,6 @@
 
 # cordova-plugin-fcmhms-rgpd
-This plugin brings push notifications, analytics, event tracking, crash reporting and more from Google Firebase to your Cordova project!
+This plugin brings push notifications, event tracking, crash reporting and more from Google Firebase to your Cordova project!
 Android and iOS supported.
 
 ## Supported Cordova Versions
@@ -208,34 +208,6 @@ window.FCMHMSPlugin.unsubscribe("example");
 Unregister from firebase, used to stop receiving push notifications. Call this when you logout user from your app. :
 ```
 window.FCMHMSPlugin.unregister();
-```
-
-### logEvent
-
-Log an event using Analytics:
-```
-window.FCMHMSPlugin.logEvent("select_content", {content_type: "page_view", item_id: "home"});
-```
-
-### setScreenName
-
-Set the name of the current screen in Analytics:
-```
-window.FCMHMSPlugin.setScreenName("Home");
-```
-
-### setUserId
-
-Set a user id for use in Analytics:
-```
-window.FCMHMSPlugin.setUserId("user_id");
-```
-
-### setUserProperty
-
-Set a user property for use in Analytics:
-```
-window.FCMHMSPlugin.setUserProperty("name", "value");
 ```
 
 ### verifyPhoneNumber
@@ -450,14 +422,4 @@ Stop the trace
 
 ```
 window.FCMHMSPlugin.stopTrace("test trace");
-```
-
-### setAnalyticsCollectionEnabled
-
-Enable/disable analytics collection
-
-```
-window.FCMHMSPlugin.setAnalyticsCollectionEnabled(true); // Enables analytics collection
-
-window.FCMHMSPlugin.setAnalyticsCollectionEnabled(false); // Disables analytics collection
 ```
