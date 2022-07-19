@@ -33,7 +33,7 @@ xmlns:android="http://schemas.android.com/apk/res/android">
       <meta-data android:name="push_kit_auto_init_enabled" android:value="false" />
 		</config-file>
 		<config-file target="AndroidManifest.xml" parent="/manifest/application">
-			<service android:name="org.apache.cordova.fcmhms.FirebasePluginMessagingService">
+			<service android:name="org.apache.cordova.fcmhms.FirebasePluginMessagingService" android:exported="true">
 				<intent-filter>
 					<action android:name="com.google.firebase.MESSAGING_EVENT"/>
 				</intent-filter>
@@ -58,7 +58,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 		<source-file src="src/android/CordovaHmsMessageService.java" target-dir="src/org/apache/cordova/fcmhms" />
 		<source-file src="src/android/CordovaHmsMessageReceiver.java" target-dir="src/org/apache/cordova/fcmhms" />
 		<source-file src="src/android/CordovaHmsMessageReceiverManager.java" target-dir="src/org/apache/cordova/fcmhms" />
-		<source-file src="src/android/colors.xml" target-dir="res/values" />
 
 		<framework src="src/android/fcmhms.gradle" custom="true" type="gradleReference" />
     <framework src="com.google.android.gms:play-services-base:+" />
