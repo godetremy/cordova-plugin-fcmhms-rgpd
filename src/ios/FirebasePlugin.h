@@ -6,8 +6,6 @@
 - (void)isGMS:(CDVInvokedUrlCommand*)command;
 - (void)isHMS:(CDVInvokedUrlCommand*)command;
 - (void)initFcmHms:(CDVInvokedUrlCommand*)command;
-- (void)getInstanceId:(CDVInvokedUrlCommand*)command;
-- (void)getId:(CDVInvokedUrlCommand*)command;
 - (void)getToken:(CDVInvokedUrlCommand*)command;
 - (void)grantPermission:(CDVInvokedUrlCommand*)command;
 - (void)hasPermission:(CDVInvokedUrlCommand*)command;

@@ -16,18 +16,6 @@ exports.initPerformance = function (success, error) {
   exec(success, error, "FCMHMSPlugin", "initPerformance", []);
 };
 
-exports.getVerificationID = function (number, success, error) {
-  exec(success, error, "FCMHMSPlugin", "getVerificationID", [number]);
-};
-
-exports.getInstanceId = function (success, error) {
-  exec(success, error, "FCMHMSPlugin", "getInstanceId", []);
-};
-
-exports.getId = function (success, error) {
-  exec(success, error, "FCMHMSPlugin", "getId", []);
-};
-
 exports.getToken = function (success, error) {
   exec(success, error, "FCMHMSPlugin", "getToken", []);
 };

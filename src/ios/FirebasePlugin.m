@@ -2,7 +2,6 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
 #import "Firebase.h"
-@import FirebaseInstanceID;
 @import FirebaseMessaging;
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
@@ -64,33 +63,6 @@ static FCMHMSPlugin *fcmhmsPlugin;
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
 
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (void)getId:(CDVInvokedUrlCommand *)command {
-    __block CDVPluginResult *pluginResult;
-
-    FIRInstanceIDHandler handler = ^(NSString *_Nullable instID, NSError *_Nullable error) {
-        if (error) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-        } else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:instID];
-        }
-
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    };
-
-    [[FIRInstanceID instanceID] getIDWithHandler:handler];
-}
-
-// DEPRECATED - alias of getToken
-- (void)getInstanceId:(CDVInvokedUrlCommand *)command {
-    CDVPluginResult *pluginResult;
-    if(self.firebaseInit){
-      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[[FIRMessaging messaging] FCMToken]];
-    } else {
-      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:ERRORINITFIREBASE];
-    }
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 

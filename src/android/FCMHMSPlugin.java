@@ -104,9 +104,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
         } else if (action.equals("initFcmHms")) {
           this.initFcmHms(callbackContext);
           return true;
-        } else if (action.equals("getId")) {
-            this.getId(callbackContext);
-            return true;
         } else if (action.equals("getToken")) {
             this.getToken(callbackContext);
             return true;
@@ -330,29 +327,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
             data.putBoolean("tap", true);
             FCMHMSPlugin.sendNotification(data, this.cordova.getActivity().getApplicationContext());
         }
-    }
-
-    private void getId(final CallbackContext callbackContext) {
-        cordova.getThreadPool().execute(new Runnable() {
-            public void run() {
-                try {
-                    if(FCMHMSPlugin.firebaseInit()){
-                    FirebaseInstallations.getInstance().getId().addOnCompleteListener( new OnCompleteListener<String>() {
-                          @Override
-                      public void onComplete(Task<String> task){
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            callbackContext.success(task.getResult());
-                }
-            }
-        });
-                  } else {
-                    callbackContext.error(ERRORINIT);
-                  }
-                } catch (Exception e) {
-                    callbackContext.error(e.getMessage());
-                }
-            }
-        });
     }
 
     private void getToken(final CallbackContext callbackContext) {
