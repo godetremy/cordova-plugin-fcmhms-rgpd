@@ -20,7 +20,7 @@ module.exports = {
       "      }",
       "  }",
       "  dependencies {",
-      "    classpath 'com.android.tools.build:gradle:3.6.0'",
+      "    classpath 'com.android.tools.build:gradle:+'",
       "    classpath 'com.google.gms:google-services:+'  // Google Services plugin",
       "    classpath 'com.huawei.agconnect:agcp:+'  // HUAWEI agcp plugin",
       "  }",
