@@ -60,7 +60,7 @@
 #endif
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenRefreshNotification:)
-                                                 name:kFIRInstanceIDTokenRefreshNotification object:nil];
+                                                 name:FIRMessagingRegistrationTokenRefreshedNotification object:nil];
 
     self.applicationInBackground = @(YES);
 
@@ -134,14 +134,6 @@
     [FCMHMSPlugin.fcmhmsPlugin sendNotification:mutableUserInfo];
 }
 
-// [START ios_10_data_message]
-// Receive data messages on iOS 10+ directly from FCM (bypassing APNs) when the app is in the foreground.
-// To enable direct data messages, you can set [Messaging messaging].shouldEstablishDirectChannel to YES.
-- (void)messaging:(FIRMessaging *)messaging didReceiveMessage:(FIRMessagingRemoteMessage *)remoteMessage {
-    NSLog(@"Received data message: %@", remoteMessage.appData);
-    [FCMHMSPlugin.fcmhmsPlugin sendNotification:remoteMessage.appData];
-}
-
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
   NSLog(@"Unable to register for remote notifications: %@", error);
 }
@@ -191,12 +183,6 @@
     [FCMHMSPlugin.fcmhmsPlugin sendNotification:mutableUserInfo];
 
     completionHandler();
-}
-
-// Receive data message on iOS 10 devices.
-- (void)applicationReceivedRemoteMessage:(FIRMessagingRemoteMessage *)remoteMessage {
-    // Print full message
-    NSLog(@"%@", [remoteMessage appData]);
 }
 #endif
 

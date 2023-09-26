@@ -169,7 +169,7 @@ static FCMHMSPlugin *fcmhmsPlugin;
 - (void)unregister:(CDVInvokedUrlCommand *)command {
     __block CDVPluginResult *pluginResult;
     if(self.firebaseInit){
-      [[FIRInstanceID instanceID] deleteIDWithHandler:^void(NSError *_Nullable error) {
+      [[FIRMessaging messaging] deleteTokenWithCompletion:^void(NSError *_Nullable error) {
           if (error) {
               NSLog(@"Unable to delete instance");
           } else {

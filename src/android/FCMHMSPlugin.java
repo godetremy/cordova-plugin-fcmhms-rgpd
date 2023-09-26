@@ -21,7 +21,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import com.huawei.agconnect.config.AGConnectServicesConfig;
@@ -121,9 +120,6 @@ public class FCMHMSPlugin extends CordovaPlugin {
             return true;
         } else if (action.equals("unsubscribe")) {
             this.unsubscribe(callbackContext, args.getString(0));
-            return true;
-        } else if (action.equals("unregister")) {
-            this.unregister(callbackContext);
             return true;
         } else if (action.equals("onNotificationOpen")) {
             this.onNotificationOpen(callbackContext);
@@ -449,7 +445,7 @@ public class FCMHMSPlugin extends CordovaPlugin {
             public void run() {
                 try {
                   if(FCMHMSPlugin.firebaseInit()){
-                    FirebaseInstallations.getInstance().delete();
+                    FirebaseMessaging.getInstance().deleteToken();
                     callbackContext.success();
                   } else {
                     callbackContext.error(ERRORINIT);
